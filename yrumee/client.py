@@ -5,6 +5,7 @@ import discord
 
 class YrumeeClient(discord.Client):
     is_active = False
+    stack = []
 
     async def on_ready(self):
         print("Logged on as {0}!".format(self.user))
@@ -35,9 +36,19 @@ class YrumeeClient(discord.Client):
             lotto_num = " ".join([str(x) for x in lotto_num])
             await message.channel.send("여름이의 로또 픽: {}".format(lotto_num))
 
-        if self.is_active is True and command == "냥바":
-            await message.channel.send("냥바 👋")
-            self.is_active = False
-        if self.is_active is False and command == "냥하":
-            await message.channel.send("냥하 🐈")
-            self.is_active = True
+        if command == "냥바":
+            if self.is_active is True:
+                await message.channel.send("냥바 👋")
+                self.is_active = False
+
+        if command == "냥하":
+            if self.is_active is False:
+                await message.channel.send("냥하 🐈")
+                self.is_active = True
+
+        if command == "푸시":
+            self.stack.append(payload)
+
+        if command == "팝":
+            if len(self.stack) > 0:
+                await message.channel.send(self.stack.pop())
