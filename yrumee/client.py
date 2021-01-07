@@ -2,8 +2,10 @@ import discord
 
 from yrumee.modules.cute import CuteModule
 from yrumee.modules.lotto import LottoModule
+from yrumee.modules.mbti import MBTIModule
 from yrumee.modules.nyang import NyangModule
 from yrumee.modules.stack import StackModule
+from yrumee.modules.yrumee import YrumeeModule
 
 
 class YrumeeClient(discord.Client):
@@ -12,11 +14,12 @@ class YrumeeClient(discord.Client):
         NyangModule(),
         LottoModule(),
         StackModule(),
-        CuteModule(),
+        MBTIModule(),
+        YrumeeModule(),
+        # CuteModule(),
     ]
 
     async def on_ready(self):
-        print(self.modules[0].__class__.__name__)
         print("Logged on as {0}!".format(self.user))
 
     async def on_message(self, message: discord.Message):
