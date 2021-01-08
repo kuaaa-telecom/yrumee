@@ -1,5 +1,6 @@
 import discord
 
+from yrumee.modules.covid19 import COVID19Module
 from yrumee.modules.cute import CuteModule
 from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
@@ -16,6 +17,7 @@ class YrumeeClient(discord.Client):
         StackModule(),
         MBTIModule(),
         YrumeeModule(),
+        COVID19Module(),
         # CuteModule(),
     ]
 

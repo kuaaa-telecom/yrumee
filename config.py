@@ -30,6 +30,7 @@ class Config:
     def __init__(self, env, is_test_env=False):
         Config.is_test_env = is_test_env
         self.bot_token = Config.required_get(env, "BOT_TOKEN")
+        self.covid19_api_token = Config.required_get(env, "COVID19_API_TOKEN")
 
 
 config = Config(os.environ)
