@@ -1,5 +1,6 @@
 import asyncio
 import io
+import traceback
 from collections import defaultdict
 from typing import Dict
 
@@ -57,7 +58,9 @@ class PingpongModule(Module):
             json = await response.json()
 
             for reply in json["response"]["replies"]:
-                print(reply["from"])
+                print(reply)
+                if "type" not in reply:
+                    continue
                 if reply["type"] == "text":
                     await message.channel.send(reply["text"])
                 elif reply["type"] == "image":
@@ -65,7 +68,7 @@ class PingpongModule(Module):
                         file=(await self._get_image_from_url(reply["image"]["url"]))
                     )
         except Exception as e:
-            print(e)
+            traceback.print_exc()
 
         self.scheduled_request[key] = False
         if key in self.clear_context_task:
