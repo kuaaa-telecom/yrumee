@@ -19,7 +19,7 @@ class YrumeeClient(discord.Client):
         MBTIModule(),
         YrumeeModule(),
         COVID19Module(),
-        PingpongModule(),
+        # PingpongModule(),
         # CuteModule(),
     ]
 
