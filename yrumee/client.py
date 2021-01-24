@@ -12,16 +12,19 @@ from yrumee.modules.yrumee import YrumeeModule
 
 class YrumeeClient(discord.Client):
 
-    modules = [
-        NyangModule(),
-        LottoModule(),
-        StackModule(),
-        MBTIModule(),
-        YrumeeModule(),
-        COVID19Module(),
-        # PingpongModule(),
-        # CuteModule(),
-    ]
+    modules = {}
+
+    def new_module(self):
+        return [
+            NyangModule(),
+            LottoModule(),
+            StackModule(),
+            MBTIModule(),
+            YrumeeModule(),
+            COVID19Module(),
+            # PingpongModule(),
+            # CuteModule(),
+        ]
 
     async def on_ready(self):
         print("Logged on as {0}!".format(self.user))
@@ -30,6 +33,9 @@ class YrumeeClient(discord.Client):
         if message.author.id == self.user.id:  # type: ignore
             return
         print("Message from {0.author}: {0.content}".format(message))
+
+        if message.guild.id not in self.modules:
+            self.modules[message.guild.id] = self.new_module()
 
         if message.content.startswith("."):
             cp = message.content.split(" ", 1)
@@ -42,10 +48,10 @@ class YrumeeClient(discord.Client):
             await self.on_text(message)
 
     async def on_command(self, command, payload, message: discord.Message):
-        for module in self.modules:
+        for module in self.modules[message.guild.id]:
             await module.on_command(command, payload, message)
 
     async def on_text(self, message: discord.Message):
-        for module in self.modules:
+        for module in self.modules[message.guild.id]:
             if await module.on_message(message) is True:
                 break
