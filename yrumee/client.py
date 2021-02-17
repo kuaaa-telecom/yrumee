@@ -6,6 +6,7 @@ from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
 from yrumee.modules.nyang import NyangModule
 from yrumee.modules.pingpong import PingpongModule
+from yrumee.modules.reaction import ReactionModule
 from yrumee.modules.stack import StackModule
 from yrumee.modules.yrumee import YrumeeModule
 
@@ -22,6 +23,7 @@ class YrumeeClient(discord.Client):
             MBTIModule(),
             YrumeeModule(),
             COVID19Module(),
+            ReactionModule(),
             # PingpongModule(),
             # CuteModule(),
         ]
