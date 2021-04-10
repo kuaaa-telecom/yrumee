@@ -35,7 +35,7 @@ class YrumeeClient(discord.Client):
 
     async def get_helps(self, modules: List[Module], message: discord.Message):
         help_str = ''.join([module.__doc__ or '' for module in modules])
-        await message.channel.send("여름이 🐈\n\n{}".format(help_str))
+        await message.channel.send("여름이 🐈\n{}".format(help_str))
 
     async def on_message(self, message: discord.Message):
         if message.author.id == self.user.id:  # type: ignore
