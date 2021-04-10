@@ -4,6 +4,10 @@ from yrumee.modules import Module
 
 
 class NyangModule(Module):
+    """
+[.냥하] 여름이가 고양이에 관련한 단어에 반응하도록 합니다.
+[.냥바] 여름이가 고양이에 관련한 단어에 반응하지 않도록 합니다.
+    """
     is_active = False
 
     async def on_command(self, command: str, payload: str, message: discord.Message):

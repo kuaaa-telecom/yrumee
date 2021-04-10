@@ -6,7 +6,9 @@ from yrumee.modules import Module
 
 
 class COVID19Module(Module):
-
+    """
+[.코로나] [.코로나19] [.covid] 대한민국의 코로나19 현황을 출력합니다. 이 기능은 실시간성이 보장되지 않습니다.
+    """
     session = None
 
     async def on_command(self, command: str, payload: str, message: discord.Message):

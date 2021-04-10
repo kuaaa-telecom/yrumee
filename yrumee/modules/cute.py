@@ -5,6 +5,10 @@ from yrumee.modules import Module
 
 
 class CuteModule(Module):
+    """
+[.귀여운사람] '이 서버에서 제일 귀여운 사람'을 등록합니다.
+여름이에게 `여름아 세상에서 제일 귀여운 사람은?`이라고 물어보면 등록된 사람을 알려줍니다.
+    """
     cute_person = ""
 
     async def on_command(self, command: str, payload: str, message: discord.Message):

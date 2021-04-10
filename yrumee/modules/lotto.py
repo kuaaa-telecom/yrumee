@@ -6,6 +6,9 @@ from yrumee.modules import Module
 
 
 class LottoModule(Module):
+    """
+[.로또] 여름이가 추천하는 로또 번호를 출력합니다.
+    """
     is_active = False
 
     async def on_command(self, command: str, payload: str, message: discord.Message):

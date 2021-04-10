@@ -6,6 +6,10 @@ from yrumee.modules import Module
 
 
 class ReactionModule(Module):
+    """
+[.리액션] 특정인이 특정 단어 또는 이모티콘을 사용하면, 여름이가 그 메시지에 리액션을 합니다.
+예) .리액션 @대상 [:리액션할_이모티콘:] [리액션할 단어]
+    """
     is_active = False
     target_ids = defaultdict(lambda: {})
 

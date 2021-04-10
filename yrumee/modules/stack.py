@@ -6,6 +6,10 @@ from yrumee.modules import Module
 
 
 class StackModule(Module):
+    """
+[.푸시] 스택에 푸시를 합니다.
+[.팝] 스택에 푸시한 값을 팝하여 출력합니다.
+    """
     is_active = False
     stack = []
 

@@ -7,12 +7,20 @@ from yrumee.modules import Module
 
 
 class MBTIModule(Module):
+    """
+[.mbti] 이 도움말을 출력합니다.
+[.mbti (mbti-유형)] 자신의 MBTI를 등록합니다.
+예) `.mbti ESFJ`
+[.mbti (사람-이름)] 다른 사람의 MBTI를 확인합니다.
+예) `.mbti 표대현`
+[.(mbti-유형)] 특정 MBTI 유형의 사람 이름을 나열합니다.
+    """
     mbti = {}
 
     @classmethod
     def is_mbti_format(cls, payload):
         mbti_payload = payload.upper()
-        return (
+        return mbti_payload == "CUTE" or (
             mbti_payload[0] in ["I", "E"]
             and mbti_payload[1] in ["S", "N"]
             and mbti_payload[2] in ["T", "F"]
@@ -35,7 +43,7 @@ class MBTIModule(Module):
 
             if not payload:
                 await message.channel.send(
-                    "[MBTI] \n1. 자신의 MBTI 등록하기 `.mbti ESFJ`\n2. 다른 사람의 MBTI 확인하기 `.mbti 표대현`"
+                    self.__doc__
                 )
             elif register_mode:
                 self.mbti[message.author.display_name.split("_")[0]] = payload.upper()

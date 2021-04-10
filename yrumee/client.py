@@ -1,5 +1,7 @@
+from typing import Dict, List
 import discord
 
+from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
 from yrumee.modules.cute import CuteModule
 from yrumee.modules.lotto import LottoModule
@@ -13,9 +15,9 @@ from yrumee.modules.yrumee import YrumeeModule
 
 class YrumeeClient(discord.Client):
 
-    modules = {}
+    modules: Dict[str, Module] = {}
 
-    def new_module(self):
+    def new_module(self) -> List[Module]:
         return [
             NyangModule(),
             LottoModule(),
@@ -31,6 +33,10 @@ class YrumeeClient(discord.Client):
     async def on_ready(self):
         print("Logged on as {0}!".format(self.user))
 
+    async def get_helps(self, modules: List[Module], message: discord.Message):
+        help_str = ''.join([module.__doc__ or '' for module in modules])
+        await message.channel.send("여름이 🐈\n\n{}".format(help_str))
+
     async def on_message(self, message: discord.Message):
         if message.author.id == self.user.id:  # type: ignore
             return
@@ -45,7 +51,12 @@ class YrumeeClient(discord.Client):
                 command, payload = cp[0], ""
             else:
                 command, payload = cp
-            await self.on_command(command.lstrip("."), payload, message)
+
+            command = command.lstrip(".")
+            if command == '도움말':
+                await self.get_helps(self.modules[message.guild.id], message)
+            else:
+                await self.on_command(command, payload, message)
         else:
             await self.on_text(message)
 
