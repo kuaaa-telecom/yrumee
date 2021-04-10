@@ -1,4 +1,5 @@
 import json
+from yrumee.storage import Storage
 
 import discord
 
@@ -15,7 +16,9 @@ class MBTIModule(Module):
 예) `.mbti 표대현`
 [.(mbti-유형)] 특정 MBTI 유형의 사람 이름을 나열합니다.
     """
-    mbti = {}
+
+    def __init__(self, storage_instance):
+        self.mbti = storage_instance.get('mbti', {})
 
     @classmethod
     def is_mbti_format(cls, payload):
