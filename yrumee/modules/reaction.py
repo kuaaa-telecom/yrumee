@@ -8,7 +8,7 @@ from yrumee.modules import Module
 class ReactionModule(Module):
     """
 [.리액션] 특정인이 특정 단어 또는 이모티콘을 사용하면, 여름이가 그 메시지에 리액션을 합니다.
-예) .리액션 @대상 [:리액션할_이모티콘:] [리액션할 단어]
+예) .리액션 @대상 [리액션할 단어] [:리액션할_이모티콘:]
     """
     is_active = False
     target_ids = defaultdict(lambda: {})
@@ -16,12 +16,12 @@ class ReactionModule(Module):
     async def on_command(self, command: str, payload: str, message: discord.Message):
         if command == "리액션":
             if len(message.mentions) < 1:
-                await message.channel.send("사용법: .리액션 @대상 [:리액션할_이모티콘:] [리액션할 단어]")
+                await message.channel.send("사용법: .리액션 @대상 [리액션할 단어] [:리액션할_이모티콘:]")
                 return
 
             target_id = message.mentions[0].id
 
-            _, emoji, word = payload.split(" ", 2)
+            _, word, emoji = payload.split(" ", 2)
             self.target_ids[target_id][word] = emoji
             await message.channel.send("등록 완료!")
 
