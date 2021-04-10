@@ -139,3 +139,4 @@ cython_debug/
 
 config_secrets.py
 .vscode/settings.json
+.storage
