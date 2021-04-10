@@ -50,7 +50,11 @@ class MBTIModule(Module):
                 await message.channel.send("[MBTI] 등록 완료!")
             else:
                 who = payload.split("_")[0]
-                mbti = self.mbti.get(who)
+                if who == '여름이':
+                    mbti = 'CUTE'
+                else:
+                    mbti = self.mbti.get(who)
+
                 if mbti:
                     await message.channel.send("{}님의 MBTI는 {}입니다.".format(who, mbti))
                 else:
