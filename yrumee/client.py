@@ -1,4 +1,5 @@
 from typing import Dict, List
+from yrumee.modules.sora import SoraModule
 from yrumee.storage import Storage
 import discord
 
@@ -28,6 +29,7 @@ class YrumeeClient(discord.Client):
             YrumeeModule(self.storage.of(server_id)),
             COVID19Module(self.storage.of(server_id)),
             ReactionModule(self.storage.of(server_id)),
+            SoraModule(self.storage.of(server_id)),
             # PingpongModule(self.storage),
             # CuteModule(self.storage),
         ]
