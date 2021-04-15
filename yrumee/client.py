@@ -1,20 +1,22 @@
 from typing import Dict, List
-from yrumee.storage import Storage
+
 import discord
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
+from yrumee.modules.graderaser import GradEraserModule
 from yrumee.modules.log import LogModule
 from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
+from yrumee.modules.mbti_quiz import MBTIQuizModule
 from yrumee.modules.nyang import NyangModule
 from yrumee.modules.reaction import ReactionModule
 from yrumee.modules.sora import SoraModule
 from yrumee.modules.stack import StackModule
+from yrumee.modules.teraforming import TeraformingModule
 from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
-from yrumee.modules.graderaser import GradEraserModule
-from yrumee.modules.teraforming import TeraformingModule
+from yrumee.storage import Storage
 
 
 class YrumeeClient(discord.Client):
@@ -37,13 +39,14 @@ class YrumeeClient(discord.Client):
             WhatToEatModule(storage),
             GradEraserModule(storage),
             TeraformingModule(storage),
+            MBTIQuizModule(storage),
         ]
 
     async def on_ready(self):
         print("Logged on as {0}!".format(self.user))
 
     async def get_helps(self, modules: List[Module], message: discord.Message):
-        help_str = ''.join([module.__doc__ or '' for module in modules])
+        help_str = "".join([module.__doc__ or "" for module in modules])
         await message.channel.send("여름이 🐈\n{}".format(help_str))
 
     async def on_message(self, message: discord.Message):
@@ -63,7 +66,7 @@ class YrumeeClient(discord.Client):
                 command, payload = cp
 
             command = command.lstrip(".")
-            if command == '도움말':
+            if command == "도움말":
                 await self.get_helps(self.modules[server_id], message)
             else:
                 await self.on_command(command, payload, message)
