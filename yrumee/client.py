@@ -1,16 +1,15 @@
 from typing import Dict, List
-from yrumee.modules.sora import SoraModule
 from yrumee.storage import Storage
 import discord
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
-from yrumee.modules.cute import CuteModule
+from yrumee.modules.log import LogModule
 from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
 from yrumee.modules.nyang import NyangModule
-from yrumee.modules.pingpong import PingpongModule
 from yrumee.modules.reaction import ReactionModule
+from yrumee.modules.sora import SoraModule
 from yrumee.modules.stack import StackModule
 from yrumee.modules.yrumee import YrumeeModule
 
@@ -30,8 +29,7 @@ class YrumeeClient(discord.Client):
             COVID19Module(self.storage.of(server_id)),
             ReactionModule(self.storage.of(server_id)),
             SoraModule(self.storage.of(server_id)),
-            # PingpongModule(self.storage),
-            # CuteModule(self.storage),
+            LogModule(self.storage.of(server_id)),
         ]
 
     async def on_ready(self):
@@ -44,7 +42,6 @@ class YrumeeClient(discord.Client):
     async def on_message(self, message: discord.Message):
         if message.author.id == self.user.id:  # type: ignore
             return
-        print("Message from {0.author}: {0.content}".format(message))
 
         server_id = str(message.guild.id)
 
