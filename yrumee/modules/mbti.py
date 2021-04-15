@@ -33,10 +33,13 @@ class MBTIModule(Module):
     async def on_command(self, command: str, payload: str, message: discord.Message):
         if self.is_mbti_format(command):
             mbti_type = command.upper()
+            mbti_instances = [k for k, v in self.mbti.items() if v == mbti_type]
+            who = "고양이🐈" if "봄이" in mbti_instances else "사람"
             await message.channel.send(
-                "[MBTI] \n{}인 사람: {}".format(
+                "[MBTI] \n{}인 {}: {}".format(
                     mbti_type,
-                    ", ".join([k for k, v in self.mbti.items() if v == mbti_type]),
+                    who,
+                    ", ".join(mbti_instances),
                 )
             )
         elif command.lower() == "mbti":
@@ -49,8 +52,11 @@ class MBTIModule(Module):
                     self.__doc__
                 )
             elif register_mode:
-                self.mbti[message.author.display_name.split("_")[0]] = payload.upper()
-                await message.channel.send("[MBTI] 등록 완료!")
+                if payload.upper() == 'CUTE':
+                    await message.channel.send("[MBTI] 당신은 고양이가 아닙니다.")
+                else:
+                    self.mbti[message.author.display_name.split("_")[0]] = payload.upper()
+                    await message.channel.send("[MBTI] 등록 완료!")
             else:
                 who = payload.split("_")[0]
                 if who == '여름이':
@@ -68,6 +74,7 @@ class MBTIModule(Module):
 
         elif command.lower() == "mbti_load_json":
             try:
-                self.mbti = json.loads(payload)
+                self.mbti.clear()
+                self.mbti.update(**json.loads(payload))
             except:
                 pass
