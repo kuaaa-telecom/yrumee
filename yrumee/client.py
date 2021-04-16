@@ -21,17 +21,18 @@ class YrumeeClient(discord.Client):
     storage: Storage
 
     def new_module(self, server_id: str) -> List[Module]:
+        storage = self.storage.of(server_id)
         return [
-            NyangModule(self.storage.of(server_id)),
-            LottoModule(self.storage.of(server_id)),
-            StackModule(self.storage.of(server_id)),
-            MBTIModule(self.storage.of(server_id)),
-            YrumeeModule(self.storage.of(server_id)),
-            COVID19Module(self.storage.of(server_id)),
-            ReactionModule(self.storage.of(server_id)),
-            SoraModule(self.storage.of(server_id)),
-            LogModule(self.storage.of(server_id)),
-            WhatToEatModule(self.storage.of(server_id)),
+            NyangModule(storage),
+            LottoModule(storage),
+            StackModule(storage),
+            MBTIModule(storage),
+            YrumeeModule(storage),
+            COVID19Module(storage),
+            ReactionModule(storage),
+            SoraModule(storage),
+            LogModule(storage),
+            WhatToEatModule(storage),
         ]
 
     async def on_ready(self):
