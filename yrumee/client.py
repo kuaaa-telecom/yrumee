@@ -11,6 +11,7 @@ from yrumee.modules.nyang import NyangModule
 from yrumee.modules.reaction import ReactionModule
 from yrumee.modules.sora import SoraModule
 from yrumee.modules.stack import StackModule
+from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
 
 
@@ -30,6 +31,7 @@ class YrumeeClient(discord.Client):
             ReactionModule(self.storage.of(server_id)),
             SoraModule(self.storage.of(server_id)),
             LogModule(self.storage.of(server_id)),
+            WhatToEatModule(self.storage.of(server_id)),
         ]
 
     async def on_ready(self):
