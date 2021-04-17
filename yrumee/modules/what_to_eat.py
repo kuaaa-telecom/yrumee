@@ -63,4 +63,4 @@ class WhatToEatModule(Module):
             self.on_diet.add(message.author.display_name.split("_")[0])
 
         elif command == "요요":
-            self.on_diet.remove(message.author.display_name.split("_")[0])
+            self.on_diet.discard(message.author.display_name.split("_")[0])
