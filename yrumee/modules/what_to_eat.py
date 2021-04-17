@@ -8,6 +8,9 @@ from yrumee.modules import Module
 
 class WhatToEatModule(Module):
     """
+[.다이어트] 다이어트 중인 사람 목록에 자신을 추가합니다.
+[.요요] 다이어트 중인 사람 목록에서 자신을 제거합니다.
+
 [.점심] 점심에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
 [.저녁] 저녁에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
 [.야식] 야식으로 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
@@ -17,6 +20,8 @@ class WhatToEatModule(Module):
         self.lunch = storage_instance.get('lunch', [])
         self.dinner = storage_instance.get('dinner', [])
         self.yasik = storage_instance.get('yasik', [])
+        self.diet = storage_instance.get('diet', ["브로콜리", "닭가슴살", "굶어라냥!"])
+        self.on_diet = storage_instance.get('on_diet', set())
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
 
@@ -33,11 +38,14 @@ class WhatToEatModule(Module):
                 await message.channel.send("등록 완료!")
 
         elif command in ["뭐먹", "오늘뭐먹지"]:
+            who = message.author.display_name.split("_")[0]
             current_hour = datetime.now().hour
             is_yasik = current_hour >= 22 or current_hour <= 5
             is_dinner = not is_yasik or current_hour >= 17
-
-            if is_yasik:
+            
+            if who in on_diet:
+                target_food_list = self.diet
+            elif is_yasik:
                 target_food_list = self.yasik
             elif is_dinner:
                 target_food_list = self.dinner
@@ -45,8 +53,14 @@ class WhatToEatModule(Module):
                 target_food_list = self.lunch
 
             if len(target_food_list) == 0:
-                food = "굶어라!"
+                food = "굶어라냥!"
             else:
                 food = random.choice(target_food_list)
 
             await message.channel.send(food)
+        
+        elif command is "다이어트":
+            on_diet.add(message.author.display_name.split("_")[0])
+        
+        elif command is "요요":
+            on_diet.remove(message.author.display_name.split("_")[0])
