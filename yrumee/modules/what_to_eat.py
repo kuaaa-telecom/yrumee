@@ -42,8 +42,8 @@ class WhatToEatModule(Module):
             current_hour = datetime.now().hour
             is_yasik = current_hour >= 22 or current_hour <= 5
             is_dinner = not is_yasik or current_hour >= 17
-            
-            if who in on_diet:
+
+            if who in self.on_diet:
                 target_food_list = self.diet
             elif is_yasik:
                 target_food_list = self.yasik
@@ -58,9 +58,9 @@ class WhatToEatModule(Module):
                 food = random.choice(target_food_list)
 
             await message.channel.send(food)
-        
-        elif command is "다이어트":
-            on_diet.add(message.author.display_name.split("_")[0])
-        
-        elif command is "요요":
-            on_diet.remove(message.author.display_name.split("_")[0])
+
+        elif command == "다이어트":
+            self.on_diet.add(message.author.display_name.split("_")[0])
+
+        elif command == "요요":
+            self.on_diet.remove(message.author.display_name.split("_")[0])
