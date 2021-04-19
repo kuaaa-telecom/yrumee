@@ -6,7 +6,8 @@ from yrumee.modules import Module
 class ReactionModule(Module):
     """
 [.리액션] 특정인이 특정 단어 또는 이모티콘을 사용하면, 여름이가 그 메시지에 리액션을 합니다.
-예) .리액션 @대상 [리액션할 단어] [:리액션할_이모티콘:]
+예) .리액션 @대상 [리액션할 단어] [:리액션할-이모티콘:]
+'리액션할-이모티콘' 자리에 ❌ 이모지를 입력하는 경우 해당 단어에 대한 리액션이 삭제됩니다.
     """
     def __init__(self, storage_instance):
         self.target_ids = storage_instance.get('target_ids', {})
@@ -22,8 +23,13 @@ class ReactionModule(Module):
             _, word, emoji = payload.split(" ", 2)
             if target_id not in self.target_ids:
                 self.target_ids[target_id] = {}
-            self.target_ids[target_id][word] = emoji
-            await message.channel.send("등록 완료!")
+
+            if emoji == "❌":
+                self.target_ids[target_id].pop(word)
+                await message.channel.send("삭제 완료!")
+            else:
+                self.target_ids[target_id][word] = emoji
+                await message.channel.send("등록 완료!")
 
     async def on_message(self, message: discord.Message) -> bool:
         for word, emoji in self.target_ids.get(message.author.id, {}).items():
