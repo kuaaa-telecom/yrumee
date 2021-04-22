@@ -11,12 +11,14 @@ class WhatToEatModule(Module):
 [.다이어트] 다이어트 중인 사람 목록에 자신을 추가합니다.
 [.요요] 다이어트 중인 사람 목록에서 자신을 제거합니다.
 
+[.아침] 아침에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
 [.점심] 점심에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
 [.저녁] 저녁에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
 [.야식] 야식으로 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
 [.오늘뭐먹지] [.뭐먹] 오늘 뭐를 먹을지 여름이에게 물어봅니다.
     """
     def __init__(self, storage_instance):
+        self.breakfast = storage_instance.get('breakfast', [])
         self.lunch = storage_instance.get('lunch', [])
         self.dinner = storage_instance.get('dinner', [])
         self.yasik = storage_instance.get('yasik', [])
@@ -25,11 +27,13 @@ class WhatToEatModule(Module):
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
 
-        if command in ["점심", "저녁", "야식"]:
+        if command in ["아침", "점심", "저녁", "야식"]:
             if not payload:
                 await message.channel.send("사용법: .{0} {0}에-먹을만한-음식".format(command))
             else:
-                if command == "점심":
+                if command == "아침":
+                    target_food_list = self.breakfast
+                elif command == "점심":
                     target_food_list = self.lunch
                 elif command == "저녁":
                     target_food_list = self.dinner
@@ -45,17 +49,21 @@ class WhatToEatModule(Module):
         elif command in ["뭐먹", "오늘뭐먹지"]:
             who = message.author.display_name.split("_")[0]
             current_hour = datetime.now().hour
-            is_yasik = current_hour >= 22 or current_hour <= 5
-            is_dinner = not is_yasik and current_hour >= 17
+
+            is_breakfast = 5 <= current_hour and current_hour < 11
+            is_lunch = 11 <= current_hour and current_hour < 17
+            is_dinner = 17 <= current_hour and current_hour < 22
 
             if who in self.on_diet:
                 target_food_list = self.diet
-            elif is_yasik:
-                target_food_list = self.yasik
+            elif is_breakfast:
+                target_food_list = self.breakfast
+            elif is_lunch:
+                target_food_list = self.lunch
             elif is_dinner:
                 target_food_list = self.dinner
             else:
-                target_food_list = self.lunch
+                target_food_list = self.yasik
 
             if len(target_food_list) == 0:
                 food = "굶어라냥!"
