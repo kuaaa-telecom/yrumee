@@ -30,18 +30,23 @@ class WhatToEatModule(Module):
                 await message.channel.send("사용법: .{0} {0}에-먹을만한-음식".format(command))
             else:
                 if command == "점심":
-                    self.lunch.append(payload)
+                    target_food_list = self.lunch
                 elif command == "저녁":
-                    self.dinner.append(payload)
+                    target_food_list = self.dinner
                 elif command == "야식":
-                    self.yasik.append(payload)
+                    target_food_list = self.yasik
+
+                target_food_list.append(payload)
+                if len(target_food_list) > 100:
+                    target_food_list.pop(0)      # O(n)
+
                 await message.channel.send("등록 완료!")
 
         elif command in ["뭐먹", "오늘뭐먹지"]:
             who = message.author.display_name.split("_")[0]
             current_hour = datetime.now().hour
             is_yasik = current_hour >= 22 or current_hour <= 5
-            is_dinner = not is_yasik or current_hour >= 17
+            is_dinner = not is_yasik and current_hour >= 17
 
             if who in self.on_diet:
                 target_food_list = self.diet
