@@ -66,6 +66,8 @@ class WhatToEatModule(Module):
 
         elif command == "다이어트":
             self.on_diet.add(message.author.display_name.split("_")[0])
+            await message.channel.send("등록 완료!")
 
         elif command == "요요":
             self.on_diet.discard(message.author.display_name.split("_")[0])
+            await message.channel.send("해제 완료!")
