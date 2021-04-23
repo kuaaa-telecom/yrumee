@@ -13,6 +13,7 @@ from yrumee.modules.sora import SoraModule
 from yrumee.modules.stack import StackModule
 from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
+from yrumee.modules.gradschool import GradSchoolModule
 
 
 class YrumeeClient(discord.Client):
@@ -33,6 +34,7 @@ class YrumeeClient(discord.Client):
             SoraModule(storage),
             LogModule(storage),
             WhatToEatModule(storage),
+            GradSchoolModule(storage),
         ]
 
     async def on_ready(self):
