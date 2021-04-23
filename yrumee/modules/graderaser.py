@@ -3,7 +3,7 @@ import discord
 from yrumee.modules import Module
 
 
-class GradSchoolModule(Module):
+class GradEraserModule(Module):
     '''
     <대학원 제거기>
     [.대학원갈래요] 대학원제거기 비활성화
