@@ -6,6 +6,7 @@ from yrumee.modules import Module
 class GradEraserModule(Module):
     '''
     <대학원 제거기>
+    [.대학원생] 대학원생 목록 표시
     [.대학원갈래요] 대학원제거기 비활성화
     [.대학원안가요] 대학원제거기 활성화
     [.대학원에 @대상 살아요] 대학원생 목록에 해당 유저 등록 (ex. .대학원에 @이건우 살아요)
@@ -17,7 +18,9 @@ class GradEraserModule(Module):
         
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
-        if command == "대학원안가요":
+        if command == "대학원생":
+            await message.channel.send(f"쿠아의 대학원생들 : {self.slaves}")
+        elif command == "대학원안가요":
             if self.is_active is False:
                 self.is_active = True
                 await message.add_reaction("👌")
@@ -40,7 +43,7 @@ class GradEraserModule(Module):
 
 
     async def on_message(self, message: discord.Message) -> bool:
-        if "대학원" in message.content and self.is_active:
+        if "대학원" in message.content and self.is_active and message.author.id in self.slaves:
             await message.delete()
             await message.channel.send("대학원은 여름이가 치워버렸다냥!")
         return False
