@@ -23,5 +23,5 @@ class GradSchoolModule(Module):
     async def on_message(self, message: discord.Message) -> bool:
         if "대학원" in message.content and self.is_active:
             await message.delete(message)
-            message.channel.send("대학원은 여름이가 치워버렸다냥!")
+            await message.channel.send("대학원은 여름이가 치워버렸다냥!")
         return False
