@@ -5,7 +5,11 @@ from yrumee.modules import Module
 
 class GradSchoolModule(Module):
     '''
-    [.] GradSchool : 대학원 제거기
+    <대학원 제거기>
+    [.대학원갈래요] 대학원제거기 비활성화
+    [.대학원안가요] 대학원제거기 활성화
+    [.대학원에 (유저명) 살아요] 대학원생 목록에 해당 유저 등록 (ex. .대학원에 이건우 살아요)
+    [.교수님 (유저명) 안보여요] 대학원생 목록에 해당 유저 삭제 (ex. .교수님 이건우 안보여요)
     '''
     is_active = False
 
