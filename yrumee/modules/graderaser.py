@@ -13,9 +13,9 @@ class GradEraserModule(Module):
     [.교수님 @대상 안보여요] 대학원생 목록에 해당 유저 삭제 (ex. .교수님 @이건우 안보여요)
     '''
     def __init__(self, storage_instance):
-        is_active = False
+        self.is_active = False
         self.slaves = storage_instance.get('slaves', [])
-        
+
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
         if command == "대학원생":
