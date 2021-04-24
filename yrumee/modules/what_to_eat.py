@@ -70,7 +70,7 @@ class WhatToEatModule(Module):
 
             await message.channel.send(food)
 
-            if len(target_food_list) < 50:
+            if len(target_food_list) > 50:
                     target_food_list.remove(food)
 
         elif command == "다이어트":
