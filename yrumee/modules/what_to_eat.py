@@ -18,11 +18,11 @@ class WhatToEatModule(Module):
 [.오늘뭐먹지] [.뭐먹] 오늘 뭐를 먹을지 여름이에게 물어봅니다.
     """
     def __init__(self, storage_instance):
-        self.breakfast = storage_instance.get('breakfast', [])
-        self.lunch = storage_instance.get('lunch', [])
-        self.dinner = storage_instance.get('dinner', [])
-        self.yasik = storage_instance.get('yasik', [])
-        self.diet = storage_instance.get('diet', ["브로콜리", "닭가슴살", "굶어라냥!"])
+        self.breakfast = storage_instance.get('breakfast', set())
+        self.lunch = storage_instance.get('lunch', set())
+        self.dinner = storage_instance.get('dinner', set())
+        self.yasik = storage_instance.get('yasik', set())
+        self.diet = storage_instance.get('diet', {"브로콜리", "닭가슴살", "굶어라냥!"})
         self.on_diet = storage_instance.get('on_diet', set())
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
@@ -40,9 +40,7 @@ class WhatToEatModule(Module):
                 elif command == "야식":
                     target_food_list = self.yasik
 
-                target_food_list.append(payload)
-                if len(target_food_list) > 100:
-                    target_food_list.pop(0)      # O(n)
+                target_food_list.add(payload)
 
                 await message.channel.send("등록 완료!")
 
@@ -71,6 +69,9 @@ class WhatToEatModule(Module):
                 food = random.choice(target_food_list)
 
             await message.channel.send(food)
+
+            if len(target_food_list) > 50:
+                    target_food_list.remove(food)
 
         elif command == "다이어트":
             self.on_diet.add(message.author.display_name.split("_")[0])
