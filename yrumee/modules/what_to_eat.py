@@ -1,29 +1,30 @@
-
 import random
-import discord
 from datetime import datetime
+
+import discord
 
 from yrumee.modules import Module
 
 
 class WhatToEatModule(Module):
     """
-[.다이어트] 다이어트 중인 사람 목록에 자신을 추가합니다.
-[.요요] 다이어트 중인 사람 목록에서 자신을 제거합니다.
+    [.다이어트] 다이어트 중인 사람 목록에 자신을 추가합니다.
+    [.요요] 다이어트 중인 사람 목록에서 자신을 제거합니다.
 
-[.아침] 아침에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
-[.점심] 점심에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
-[.저녁] 저녁에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
-[.야식] 야식으로 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
-[.오늘뭐먹지] [.뭐먹] 오늘 뭐를 먹을지 여름이에게 물어봅니다.
+    [.아침] 아침에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
+    [.점심] 점심에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
+    [.저녁] 저녁에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
+    [.야식] 야식으로 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
+    [.오늘뭐먹지] [.뭐먹] 오늘 뭐를 먹을지 여름이에게 물어봅니다.
     """
+
     def __init__(self, storage_instance):
-        self.breakfast = storage_instance.get('breakfast', set())
-        self.lunch = storage_instance.get('lunch', set())
-        self.dinner = storage_instance.get('dinner', set())
-        self.yasik = storage_instance.get('yasik', set())
-        self.diet = storage_instance.get('diet', {"브로콜리", "닭가슴살", "굶어라냥!"})
-        self.on_diet = storage_instance.get('on_diet', set())
+        self.breakfast = storage_instance.get("breakfast", set())
+        self.lunch = storage_instance.get("lunch", set())
+        self.dinner = storage_instance.get("dinner", set())
+        self.yasik = storage_instance.get("yasik", set())
+        self.diet = storage_instance.get("diet", {"브로콜리", "닭가슴살", "굶어라냥!"})
+        self.on_diet = storage_instance.get("on_diet", set())
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
 
@@ -39,6 +40,8 @@ class WhatToEatModule(Module):
                     target_food_list = self.dinner
                 elif command == "야식":
                     target_food_list = self.yasik
+                else:
+                    target_food_list = set()
 
                 target_food_list.add(payload)
 
@@ -66,12 +69,12 @@ class WhatToEatModule(Module):
             if len(target_food_list) == 0:
                 food = "굶어라냥!"
             else:
-                food = random.choice(target_food_list)
+                food = random.choice(list(target_food_list))
 
             await message.channel.send(food)
 
             if len(target_food_list) > 50:
-                    target_food_list.remove(food)
+                target_food_list.remove(food)
 
         elif command == "다이어트":
             self.on_diet.add(message.author.display_name.split("_")[0])
