@@ -35,7 +35,7 @@ class YrumeeClient(discord.Client):
             SoraModule(storage),
             LogModule(storage),
             WhatToEatModule(storage),
-            GradSchoolModule(storage),
+            GradEraserModule(storage),
             TeraformingModule(storage),
         ]
 
