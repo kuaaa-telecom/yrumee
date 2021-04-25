@@ -39,6 +39,8 @@ class WhatToEatModule(Module):
                     target_food_list = self.dinner
                 elif command == "야식":
                     target_food_list = self.yasik
+                else:
+                    target_food_list = set()
 
                 target_food_list.add(payload)
 
