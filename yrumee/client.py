@@ -46,7 +46,8 @@ class YrumeeClient(discord.Client):
     async def get_helps(self, modules: List[Module], message: discord.Message):
         help_str = "".join(
             [
-                "\n".join([m.lstrip() for m in module.__doc__.split("\n")]) or ""
+                "\n".join([m.lstrip() for m in (module.__doc__ or "").split("\n")])
+                or ""
                 for module in modules
             ]
         )
