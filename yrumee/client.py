@@ -72,7 +72,7 @@ class YrumeeClient(discord.Client):
             command = command.lstrip(".")
             if command == "도움말":
                 await self.get_helps(self.modules[server_id], message)
-            else:
+            elif command:
                 await self.on_command(command, payload, message)
         else:
             await self.on_text(message)
