@@ -16,6 +16,7 @@ class WhatToEatModule(Module):
     [.저녁] 저녁에 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
     [.야식] 야식으로 먹을만한 식사의 종류 혹은 밥집을 추가합니다.
     [.오늘뭐먹지] [.뭐먹] 오늘 뭐를 먹을지 여름이에게 물어봅니다.
+    [.뱃속] 들어있는 음식 리스트를 반환합니다.
     """
 
     def __init__(self, storage_instance):
@@ -83,3 +84,7 @@ class WhatToEatModule(Module):
         elif command == "요요":
             self.on_diet.discard(message.author.display_name.split("_")[0])
             await message.channel.send("해제 완료!")
+        
+        elif command == "뱃속":
+            await message.channel.send(f"아침: {self.breakfast}\n점심: {self.lunch}\n저녁: {self.dinner}\n야식: {self.yasik}\n다이어트: {self.diet}")
+
