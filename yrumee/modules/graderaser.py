@@ -30,8 +30,11 @@ class GradEraserModule(Module):
                 await message.add_reaction("👌")
         elif command == "대학원에":
             slave = message.mentions[0].id
-            self.slaves.append(slave)
-            await message.add_reaction("👌")
+            if slave not in self.slaves:
+                self.slaves.append(slave)
+                await message.add_reaction("👌")
+            else:
+                await message.channel.send("이미 있는 대학원생입니다.")
         elif command == "교수님":
             slave = message.mentions[0].id
             if slave in self.slaves:
