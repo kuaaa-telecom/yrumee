@@ -86,5 +86,8 @@ class WhatToEatModule(Module):
             await message.channel.send("해제 완료!")
         
         elif command == "뱃속":
-            await message.channel.send(f"아침: {self.breakfast}\n점심: {self.lunch}\n저녁: {self.dinner}\n야식: {self.yasik}\n다이어트: {self.diet}")
+            payload = f"아침: {self.breakfast}\n점심: {self.lunch}\n저녁: {self.dinner}\n야식: {self.yasik}\n다이어트: {self.diet}"
+            chunks = [payload[i:i+1000] for i in range(0, len(payload), 1000)]
+            for chunk in chunks:
+                await message.channel.send(chunk)
 
