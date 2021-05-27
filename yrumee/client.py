@@ -4,7 +4,6 @@ import discord
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
-from yrumee.modules.everyday import EverydayModule
 from yrumee.modules.graderaser import GradEraserModule
 from yrumee.modules.log import LogModule
 from yrumee.modules.lotto import LottoModule
@@ -39,7 +38,6 @@ class YrumeeClient(discord.Client):
             WhatToEatModule(storage),
             GradEraserModule(storage),
             TeraformingModule(storage),
-            EverydayModule(storage)
         ]
 
     async def on_ready(self):
