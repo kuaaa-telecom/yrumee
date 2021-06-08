@@ -1,4 +1,3 @@
-import schedule
 import datetime
 import time
 
@@ -28,15 +27,8 @@ class EverydayModule(Module):
     def __init__(self, storage_instance):
         self.dow = storage_instance.get("dow", ["월", "화", "수", "목", "금", "토", "일"])
 
-    async def on_time():
-        now = time.localtime()
-        dow_dic = {0:'등교랑 출근 힘내라냥!', 1:'지치지 말고 차분하게 하루를 보내자냥!', 2:'벌써 한 주의 중간이다냥!', 3:'곧 주말이다냥! 파이팅이다냥!', 4:'불금! 내일은 주말이다냥!', 5:'오늘 하루 여유롭게 푹 쉬라냥!', 6:'남은 주말을 즐기자냥!'}
-        if is_active == True:
-            await message.channel.send("오늘은 {0}월 {1}일 {2}요일이다냥!" .format(now.tm_mon, now.tm_mday, dow[datetime.today().weekday()]))
-            await message.channel.send(dow_dic.get(datetime.today().weekday()))
-            
-    schedule.every().days.at("00:00").do(on_time)
-        
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    async def on_time(self, now=time.localtime()):
+        dow_dic = {0:'등교랑 출근 힘내라냥!', 1:'서두르지 말고 천천히 하라냥!', 2:'벌써 한 주의 중간이다냥!', 3:'곧 주말이다냥! 파이팅이다냥!', 4:'불금! 내일은 주말이다냥!', 5:'오늘 하루 여유롭게 푹 쉬라냥!', 6:'슬슬 다음 주를 준비하자냥!'}
+        if is_active == True and now.tm_hour == 00 and now.tm_min == 00 and now.tm_sec == 00:
+                await message.channel.send("오늘은 {0}월 {1}일 {2}요일이다냥!" .format(now.tm_month, now.tm_mday, dow[datetime.datetime.today().weekday()]))
+                await message.channel.send(dow_dic.get(datetime.datetime.today().weekday()))
