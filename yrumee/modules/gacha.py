@@ -77,7 +77,15 @@ class GachaModule(Module):
                 ("[.가챠 [타입] [횟수]]", "[타입] -> 일반, [횟수] -> 단챠/연챠(SR 이상 한 장 확정!)"),
                 ("[.컬렉션]"), "이번 시즌에도 역시 제가 대활약이네요"]
 
-
+    season1 = [(1, "EX", "하스 앞에서 낮잠자는 여름이", "여름이(귀엽다)", ""),
+                (1, "SSR", "회장 김보경", "202101 KUAAA 회장", ""),
+                (1, "SR", "연임하는 관측부장 김수인", "안해요......", ""),
+                (1, "SR", "관측위성 서보성", "지금은 지구래요", ""),
+                (1, "SR", "생일 스티커를 보고 경악하는 이유정", "이거 몇 개나 붙인거야ㅋㅋㅋㅋ", ""),
+                (1, "R", "관측회 없는 관측부장 김수인", "않이 관측회가 없는데요", ""),
+                (1, "R", "코드포스 치는 편집부장 최희원", "아니 레이팅 아....", ""),
+                (1, "R", "마라탕 먹는 서보성", "마라탕(보성푸드, 맛있다)", ""),
+                (1, "R", "체스하는 황덕근", "퀸한테 작별인사 하세요", "")]
 
     def __init__(self, storage_instance):
         self.GM = storage_instance.get('GM', [699428369808359574])
@@ -88,7 +96,11 @@ class GachaModule(Module):
         self.RCardDB = storage_instance.get('RCardDB', set())
         self.users = storage_instance.get('users', {})
         self.cardCnt = storage_instance.get('cardCnt', 1)
-        #TODO
+        
+        if len(self.cardDB) == 0:
+            for infolist in self.season1:
+                self.addCard(infolist)
+
     
     def userCardList(self, user: GachaUser):
         cardlist = []
@@ -196,6 +208,23 @@ class GachaModule(Module):
         embed.add_field(name="카드 수", value=user.cardcnt, inline=True)
         return embed
 
+    def addCard(self, infolist):
+        if infolist[1] == "EX":
+            target_DB = self.EXCardDB
+        elif infolist[1] == "SSR":
+            target_DB = self.SSRCardDB
+        elif infolist[1] == "SR":
+            target_DB = self.SRCardDB
+        elif infolist[1] == "R":
+            target_DB = self.RCardDB
+        else:
+            return False
+
+        self.cardDB.add((self.cardCnt, int(infolist[0]), infolist[1], infolist[2], infolist[3], infolist[4]))
+        target_DB.add(self.cardDB[-1])
+        self.cardCnt += 1
+        return self.cardDB[-1]
+
     async def on_command(self, command: str, payload: str, message: discord.Message):
         
         '''카드 추가'''
@@ -206,22 +235,12 @@ class GachaModule(Module):
                 await message.channel.send("다시 입력해주세요.")
                 return False
 
-            if payload_list[1] == "EX":
-                target_DB = self.EXCardDB
-            elif payload_list[1] == "SSR":
-                target_DB = self.SSRCardDB
-            elif payload_list[1] == "SR":
-                target_DB = self.SRCardDB
-            elif payload_list[1] == "R":
-                target_DB = self.RCardDB
+            card = self.addCard(payload_list)
+
+            if card:
+                await message.channel.send("등록 완료!", embed=self.showCard(card))
             else:
-                return False
-
-            self.cardDB.add((self.cardCnt, int(payload_list[0]), payload_list[1], payload_list[2], payload_list[3], payload_list[4]))
-            target_DB.add(self.cardDB[-1])
-            self.cardCnt += 1
-
-            await message.channel.send("등록 완료!")
+                await message.channel.send("다시 입력해주세요.")
 
         elif command == "가챠":
             if payload == "도움말":
