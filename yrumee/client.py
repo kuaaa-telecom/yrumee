@@ -15,6 +15,7 @@ from yrumee.modules.stack import StackModule
 from yrumee.modules.teraforming import TeraformingModule
 from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
+from yrumee.modules.yrumee import GachaModule
 from yrumee.storage import Storage
 
 
@@ -38,6 +39,7 @@ class YrumeeClient(discord.Client):
             WhatToEatModule(storage),
             GradEraserModule(storage),
             TeraformingModule(storage),
+            GachaModule(storage)
         ]
 
     async def on_ready(self):
