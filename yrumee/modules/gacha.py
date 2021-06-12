@@ -1,5 +1,6 @@
 import discord
 import random
+import re
 
 from yrumee.modules import Module
 from yrumee.modules import gacha_db
@@ -28,7 +29,7 @@ class GachaSeason:
         self.number = 0
         self.name = ""
         self.totalcards = 0
-        self.cardlist = {"EX":0, "SSR":0, "SR":0, "R":0}
+        self.cardlist = {"EX[:star::star::star::star:]":0, "SSR[:star::star::star:]":0, "SR[:star::star:]":0, "R[:star:]":0}
 
 class GachaUser:
 
@@ -59,7 +60,7 @@ class GachaUser:
         self.seasonlist = {}
 
 def rarePriority(card: GachaCard):
-    priority = {"EX": 1, "SSR": 2, "SR": 3, "R": 4}
+    priority = {"EX[:star::star::star::star:]": 1, "SSR[:star::star::star:]": 2, "SR[:star::star:]": 3, "R[:star:]": 4}
     return priority[card.rare]
 
 class GachaModule(Module):
@@ -68,7 +69,7 @@ class GachaModule(Module):
     '''
 
     help_title = "<가챠를 돌려 동료를 모으고 최강의 쿠안 군단을 만들자 ~현실에서는 일반부원인 내가 디코에서는 지도교수?!~>"
-    help_list = [("[.계정생성]", "밤새도록 디코를 하다 트럭에 치였더니 전생한 이세계에서는 내가 쿠아 지도교수?!"),
+    help_list = [("[.계정생성 [닉네임]]", "밤새도록 디코를 하다 트럭에 치였더니 전생한 이세계에서는 내가 쿠아 지도교수?!"),
                 ("[.프로필]", "SSS급 지도교수님은 평범한 대학 라이프를 보내고 싶습니다!"),
                 ("[.포인트]", "제 보유 포인트가 너무 많아 여신님도 곤란한 모양인데요?"),
                 ("[.쿠안들]", "우리 쿠안들이 너무 강한 나머지 세계정복도 가능할거 같습니다만."),
@@ -109,10 +110,9 @@ class GachaModule(Module):
     def showCard(self, card: GachaCard):
         embed = discord.Embed(title=card.name, description=card.rare, color=0x62c1cc)
         embed.set_footer(text=card.desc)
-        if card.imgurl == "":
+        imgurl = card.imgurl
+        if imgurl == "":
             imgurl = gacha_db.default_img[rarePriority(card)]
-        else:
-            imgrul = card.imgurl
         if imgurl != "":
             embed.set_image(url=imgurl)
         return embed
@@ -197,7 +197,7 @@ class GachaModule(Module):
         to_level_up = 100 + 10 * (user.level)
         to_point = 3
 
-        embed = discord.Embed(title=user.name, description=user.name+" 님의 프로필입니다!", color=0x62c1cc)
+        embed = discord.Embed(title=":star:"+user.name, description=user.name+" 님의 프로필입니다!", color=0x62c1cc)
         embed.add_field(name="닉네임", value=user.name + " (lv." + str(user.level) + ")", inline=False)
         embed.add_field(name="채팅을 친 횟수", value=user.chatcnt, inline=True)
         embed.add_field(name="다음 츄르까지", value=to_point-user.pointexp, inline=True)
@@ -209,13 +209,13 @@ class GachaModule(Module):
         return embed
 
     def addCard(self, infolist):
-        if infolist[2] == "EX":
+        if infolist[2] == "EX[:star::star::star::star:]":
             target_DB = self.EXCardDB
-        elif infolist[2] == "SSR":
+        elif infolist[2] == "SSR[:star::star::star:]":
             target_DB = self.SSRCardDB
-        elif infolist[2] == "SR":
+        elif infolist[2] == "SR[:star::star:]":
             target_DB = self.SRCardDB
-        elif infolist[2] == "R":
+        elif infolist[2] == "R[:star:]":
             target_DB = self.RCardDB
         else:
             return False
@@ -292,12 +292,28 @@ class GachaModule(Module):
                     await message.channel.send("사용법: .가챠 [타입(일반)] [횟수(단챠, 연챠)]")
         
         elif command == "계정생성":
+            if not payload:
+                await message.channel.send("닉네임을 입력해주세요!")
+                return False
             if message.author.id in self.users:
                 await message.channel.send("이미 등록된 계정이에요!")
                 return False
             if message.mentions or message.mention_everyone:
                 await message.channel.send("건우선배 멈춰")
                 return False
+            
+            p = re.compile(r'^(\w|[가-힣])+$')
+
+            if not p.match(payload):
+                await message.channel.send("닉네임에는 한글, 영어, 숫자, 그리고 언더바만 사용할 수 있어요!")
+                return False
+
+            if len(self.users) > 0:
+                for user in self.users.values():
+                    if user.name == payload:
+                        await message.channel.send("중복된 닉네임이에요!")
+                        return False
+
             self.users[message.author.id] = GachaUser(message.author.id, message.author.display_name)
 
             if message.author.id in self.GM:
