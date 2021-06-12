@@ -55,7 +55,7 @@ class Storage:
         cls.logger.info("migrate: {} -> {}".format(version_from, version_to))
         if version_to == 2:
             # migration for e15afb376421b19bc721f45344af7cb03aa91204
-            for key in ["breakfast", "lunch", "dinner", "yasik", "diet", "on_diet"]:
+            for key in ["breakfast", "lunch", "dinner", "yasik", "diet", "on_diet", "GM", "cardDB", "EXCardDB", "SSRCardDB", "SRCardDB", "RCardDB", "users"]:
                 maybe_list = instance.get(key, None)
                 if type(maybe_list) is list:
                     setattr(instance, key, set(maybe_list))
