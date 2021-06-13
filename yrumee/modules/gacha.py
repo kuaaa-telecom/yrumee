@@ -1,19 +1,12 @@
-import discord
 import random
 import re
 
-from yrumee.modules import Module
-from yrumee.modules import gacha_db
+import discord
+
+from yrumee.modules import Module, gacha_db
+
 
 class GachaCard:
-
-    def __init__(self):
-        self.number = 0
-        self.season = ""
-        self.rare = ""
-        self.name = ""
-        self.desc = ""
-        self.imgurl = ""
 
     def __init__(self, number, season, rare, name, desc, imgurl):
         self.number = number
@@ -34,18 +27,6 @@ class GachaSeason:
 class GachaUser:
 
     initpoint = 50
-
-    def __init__(self):
-        self.UID = 0
-        self.name = ""
-        self.level = 0
-        self.chatcnt = 0
-        self.pointexp = 0
-        self.levelexp = 0
-        self.point = self.initpoint
-        self.cardcnt = 0
-        self.cardlist = {}
-        self.seasonlist = {}
 
     def __init__(self, UID, name):
         self.UID = UID
@@ -89,17 +70,17 @@ class GachaModule(Module):
         if len(self.cardDB) == 0:
             for infolist in gacha_db.season1:
                 self.addCard(infolist)
-    
+
     def userCardList(self, user: GachaUser):
         cardlist = []
         for card in self.cardDB:
             if card.number in user.cardlist:
                 cardlist.append((card, user.cardlist[card.number]))
         return cardlist
-    
+
     def showCardList(self, title, desc, cardlist, user=None):
         embed = discord.Embed(title=title, description=desc, color=0x62c1cc)
-        if(user):
+        if user:
             for card, cnt in cardlist:
                 embed.add_field(name=card.rare, value=card.name + "X" + str(cnt), inline=False)
         else:
@@ -124,11 +105,14 @@ class GachaModule(Module):
             table = [0.9, 0.09, 0.009, 0.001]
         elif gacha_type == '고급':
             table = [0, 0.9, 0.09, 0.01]
+        else:
+            raise ValueError('invalid gacha_type {}'.format(gacha_type))
+
         for i in range(4):
             rnd -= table[3 - i]
             if rnd < 0:
                 return i + 1
-        return None
+        return 0
 
     def selectCard(self, rare: int):
         if rare == 4:
@@ -140,7 +124,7 @@ class GachaModule(Module):
         elif rare == 1:
             return random.choice(list(self.EXCardDB))
         else:
-            return None
+            raise ValueError('invalid rare value')
 
     def gachaCost(self, gacha_type: str, gacha_cnt: str):
         normal_cost = 5
@@ -227,9 +211,12 @@ class GachaModule(Module):
         return tempCard
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
-        
+
         '''카드 추가'''
-        if command == "관리자" and message.author.id in self.GM:
+        # Cannot access member "id" for type "Member" Member "id" is unknown때문에 밖으로 빼둠
+        author_id = message.author.id
+
+        if command == "관리자" and author_id in self.GM:
 
             await message.channel.send("아직 만드는 중이에요!")
             return False
@@ -255,53 +242,56 @@ class GachaModule(Module):
                 await message.channel.send("도움말 목록이에요!", embed=embed)
             #가챠 뽑는 로직: skeletonK
             else:
-                if not message.author.id in self.users:
+                if not author_id in self.users:
                     await message.channel.send("계정 등록을 먼저 해 주세요!")
                     return False
-                
+
                 payload_list = payload.split()
 
                 if len(payload_list) == 2 and payload_list[0] in ['일반'] and payload_list[1] in ['단챠', '연챠']:
                     cost = self.gachaCost(payload_list[0], payload_list[1])
 
-                    if self.users[message.author.id].point < cost:
+                    if self.users[author_id].point < cost:
                         await message.channel.send("츄르가 부족해요!")
                         return False
-                    
-                    self.users[message.author.id].point -= cost
-                    cardlist = self.gachaProcess(payload_list[0], payload_list[1])
 
-                    for card in cardlist:
-                        card_number = card.number
-                        if not card_number in self.users[message.author.id].cardlist:
-                            self.users[message.author.id].cardlist[card_number] = 1
-                        else:
-                            self.users[message.author.id].cardlist[card_number] = self.users[message.author.id].cardlist[card_number] + 1
-                        self.users[message.author.id].cardcnt += 1
-                    
-                    if len(cardlist) <= 0:
-                        return False
-                    
-                    if len(cardlist) <= 1:
-                        embed = self.showCard(cardlist[0])
+                    self.users[author_id].point -= cost
+                    try:
+                        cardlist = self.gachaProcess(payload_list[0], payload_list[1])
+                    except ValueError as e:
+                        print(e)
+                        await message.channel.send(".가챠: 오류가 발생하였습니다.")
                     else:
-                        embed = self.showCardList("10연차 결과!", "", cardlist)
-                    await message.channel.send(embed=embed)
+                        for card in cardlist:
+                            card_number = card.number
+                            if not card_number in self.users[author_id].cardlist:
+                                self.users[author_id].cardlist[card_number] = 1
+                            else:
+                                self.users[author_id].cardlist[card_number] = self.users[author_id].cardlist[card_number] + 1
+                            self.users[author_id].cardcnt += 1
 
-                else:         
+                        if len(cardlist) <= 0:
+                            return False
+
+                        if len(cardlist) <= 1:
+                            embed = self.showCard(cardlist[0])
+                        else:
+                            embed = self.showCardList("10연차 결과!", "", cardlist)
+                        await message.channel.send(embed=embed)
+                else:
                     await message.channel.send("사용법: .가챠 [타입(일반)] [횟수(단챠, 연챠)]")
-        
+
         elif command == "계정생성":
             if not payload:
                 await message.channel.send("닉네임을 입력해주세요!")
                 return False
-            if message.author.id in self.users:
+            if author_id in self.users:
                 await message.channel.send("이미 등록된 계정이에요!")
                 return False
             if message.mentions or message.mention_everyone:
                 await message.channel.send("건우선배 멈춰")
                 return False
-            
+
             p = re.compile(r'^(\w|[가-힣])+$')
 
             if not p.match(payload):
@@ -314,33 +304,33 @@ class GachaModule(Module):
                         await message.channel.send("중복된 닉네임이에요!")
                         return False
 
-            self.users[message.author.id] = GachaUser(message.author.id, message.author.display_name)
+            self.users[author_id] = GachaUser(author_id, message.author.display_name)
 
-            if message.author.id in self.GM:
-                self.users[message.author.id].point = 99999999999
+            if author_id in self.GM:
+                self.users[author_id].point = 99999999999
 
-            await message.channel.send(message.author.display_name + "님의 계정을 생성했어요!")
+            await message.channel.send("{}님의 계정을 생성했어요!".format(message.author.display_name))
 
         elif command == "프로필":
-            if not message.author.id in self.users:
+            if not author_id in self.users:
                 await message.channel.send("계정 등록을 먼저 해 주세요!")
                 return False
-            embed = self.showUserInfo(self.users[message.author.id])
+            embed = self.showUserInfo(self.users[author_id])
             await message.channel.send(embed=embed)
 
         elif command == "포인트":
-            if not message.author.id in self.users:
+            if not author_id in self.users:
                 await message.channel.send("계정 등록을 먼저 해 주세요!")
                 return False
-            await message.channel.send("잔여 츄르:" + str(self.users[message.author.id].point))
+            await message.channel.send("잔여 츄르: {}".format(str(self.users[author_id].point)))
 
         elif command == "쿠안들":
-            if not message.author.id in self.users:
+            if not author_id in self.users:
                 await message.channel.send("계정 등록을 먼저 해 주세요!")
                 return False
-            cardlist = self.userCardList(self.users[message.author.id])
-            await message.channel.send(embed=self.showCardList(self.users[message.author.id].name, "보유한 쿠안 목록이에요!", cardlist, user=self.users[message.author.id]))
-        
+            cardlist = self.userCardList(self.users[author_id])
+            await message.channel.send(embed=self.showCardList(self.users[author_id].name, "보유한 쿠안 목록이에요!", cardlist, user=self.users[author_id]))
+
         elif command == "쿠안":
             target_card = None
 
@@ -354,16 +344,17 @@ class GachaModule(Module):
             if not target_card:
                 await message.channel.send("잘못된 카드 이름이에요!")
                 return False
-            
-            if message.author.id not in self.users.cardlist[target_card.number]:
+
+            if author_id not in self.users.cardlist[target_card.number]:
                 await message.channel.send("보유하지 않은 카드에요!")
                 return False
 
             await message.channel.send(embed=self.showCard(target_card))
-        
+
         elif command == "컬렉션":
             await message.channel.send("아직 만드는 중이에요!")
 
-    async def on_message(self, message: discord.message):
-        if message.author.id in self.users:
-            self.increaseChatcnt(self.users[message.author.id])
+    async def on_message(self, message: discord.Message):
+        author_id = message.author.id
+        if author_id in self.users:
+            self.increaseChatcnt(self.users[author_id])
