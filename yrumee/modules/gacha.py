@@ -2,8 +2,10 @@ import random
 import re
 
 import discord
+import yrumee.modules.gacha_params as params
 
-from yrumee.modules import Module, gacha_db
+from yrumee.modules import Module
+from yrumee.modules import gacha_db
 
 
 class GachaCard:
@@ -102,14 +104,14 @@ class GachaModule(Module):
         rnd = random.random()
         table = []
         if gacha_type == '일반':
-            table = [0.9, 0.09, 0.009, 0.001]
+            table = [0.001, 0.009, 0.09, 0.9]
         elif gacha_type == '고급':
-            table = [0, 0.9, 0.09, 0.01]
+            table = [0.01, 0.09, 0.9, 0]
         else:
             raise ValueError('invalid gacha_type {}'.format(gacha_type))
 
         for i in range(4):
-            rnd -= table[3 - i]
+            rnd -= table[i]
             if rnd < 0:
                 return i + 1
         return 0
@@ -127,9 +129,9 @@ class GachaModule(Module):
             raise ValueError('invalid rare value')
 
     def gachaCost(self, gacha_type: str, gacha_cnt: str):
-        normal_cost = 5
-        special_cost = 50
-        single_cost = normal_cost if gacha_type == '일반' else special_cost
+        normal_cost = params.normal_gacha_cost
+        premium_cost = params.premium_gacha_cost
+        single_cost = normal_cost if gacha_type == '일반' else premium_cost
         cost = (1 if gacha_cnt == '단챠' else 10) * single_cost
         return cost
 
@@ -147,8 +149,8 @@ class GachaModule(Module):
                 for i in range(9):
                     rare = self.selectRare(gacha_type)
                     gacha_result.append(self.selectCard(rare))
-                    best_rare = max(best_rare, rare)
-                if best_rare > 4:
+                    best_rare = min(best_rare, rare)
+                if best_rare >= 4:
                     rare = self.selectRare('고급')
                     gacha_result.append(self.selectCard(rare))
                 else:
@@ -162,20 +164,21 @@ class GachaModule(Module):
 
         return gacha_result
 
-    def increaseChatcnt(self, user: GachaUser):
-        to_level_up = 100 + 10 * (user.level)
-        to_point = 3
+    async def increaseChatcnt(self, user: GachaUser, message: discord.Message):
+        lv_up = params.to_level_up(user.level)
+        pt = params.to_point
 
         user.chatcnt += 1
         user.pointexp += 1
         user.levelexp += 1
 
-        if user.pointexp >= to_point:
+        if user.pointexp >= pt:
             user.point += 1
             user.pointexp = 0
-        if user.levelexp >= to_level_up:
+        if user.levelexp >= lv_up:
             user.level += 1
             user.levelexp = 0
+            await message.channel.send(user.name + "님의 레벨이 올랐어요! ({} → {})".format(user.level - 1, user.level))
 
     def showUserInfo(self, user: GachaUser):
         to_level_up = 100 + 10 * (user.level)
@@ -211,7 +214,6 @@ class GachaModule(Module):
         return tempCard
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
-
         '''카드 추가'''
         # Cannot access member "id" for type "Member" Member "id" is unknown때문에 밖으로 빼둠
         author_id = message.author.id
@@ -240,6 +242,7 @@ class GachaModule(Module):
                 for helpdoc in self.help_list:
                     embed.add_field(name=helpdoc[0], value=helpdoc[1], inline=False)
                 await message.channel.send("도움말 목록이에요!", embed=embed)
+                return False
             #가챠 뽑는 로직: skeletonK
             else:
                 if not author_id in self.users:
@@ -248,7 +251,7 @@ class GachaModule(Module):
 
                 payload_list = payload.split()
 
-                if len(payload_list) == 2 and payload_list[0] in ['일반'] and payload_list[1] in ['단챠', '연챠']:
+                if len(payload_list) == 2 and payload_list[0] in ['일반', '고급'] and payload_list[1] in ['단챠', '연챠']:
                     cost = self.gachaCost(payload_list[0], payload_list[1])
 
                     if self.users[author_id].point < cost:
@@ -304,12 +307,12 @@ class GachaModule(Module):
                         await message.channel.send("중복된 닉네임이에요!")
                         return False
 
-            self.users[author_id] = GachaUser(author_id, message.author.display_name)
+            self.users[author_id] = GachaUser(author_id, payload)
 
             if author_id in self.GM:
                 self.users[author_id].point = 99999999999
 
-            await message.channel.send("{}님의 계정을 생성했어요!".format(message.author.display_name))
+            await message.channel.send("{} 님의 계정을 생성했어요!".format(payload))
 
         elif command == "프로필":
             if not author_id in self.users:
@@ -333,19 +336,18 @@ class GachaModule(Module):
 
         elif command == "쿠안":
             target_card = None
-
-            await message.channel.send("아직 만드는 중이에요!")
-            return False
-
+            target_card_num = None
+            
             for card in self.cardDB:
                 if card.name == payload:
                     target_card = card
+                    target_card_num = card.number
                     break
             if not target_card:
                 await message.channel.send("잘못된 카드 이름이에요!")
                 return False
-
-            if author_id not in self.users.cardlist[target_card.number]:
+            
+            if target_card_num not in self.users[author_id].cardlist:
                 await message.channel.send("보유하지 않은 카드에요!")
                 return False
 
@@ -354,7 +356,6 @@ class GachaModule(Module):
         elif command == "컬렉션":
             await message.channel.send("아직 만드는 중이에요!")
 
-    async def on_message(self, message: discord.Message):
-        author_id = message.author.id
-        if author_id in self.users:
-            self.increaseChatcnt(self.users[author_id])
+    async def on_message(self, message: discord.message):
+        if message.author.id in self.users:
+            await self.increaseChatcnt(self.users[message.author.id], message)
