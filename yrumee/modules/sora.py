@@ -1,9 +1,9 @@
+import random
 from collections import defaultdict
 
 import discord
-import random
-
 from khaiii import KhaiiiApi
+
 from yrumee.modules import Module
 
 
@@ -89,7 +89,7 @@ class SoraModule(Module):
             "싫어하",
             "VV",
             "호불호",
-        )
+        ),
     ]
 
     api = KhaiiiApi()
@@ -125,13 +125,11 @@ class SoraModule(Module):
                             )
                             break
 
-            print((message.content, ' '.join([str(s) for s in ss]), contexts))
+            print((message.content, " ".join([str(s) for s in ss]), contexts))
 
             choices = [c[1] for c in contexts]
-            key = random.choice(choices) if len(choices) > 0 else ''
-            content = random.choice(
-                self.predefined_content.get(key, self.contents)
-            )
+            key = random.choice(choices) if len(choices) > 0 else ""
+            content = random.choice(self.predefined_content.get(key, self.contents))
             await message.channel.send("<@{}> {}".format(message.author.id, content))
 
         return False
