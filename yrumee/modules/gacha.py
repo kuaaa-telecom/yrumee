@@ -33,7 +33,7 @@ class GachaSeason:
 
 class GachaUser:
 
-    initpoint = 150
+    initpoint = 50
 
     def __init__(self):
         self.UID = 0
