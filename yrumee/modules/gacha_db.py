@@ -6,7 +6,7 @@ default_img = ["",
                 ]
 
 
-season1 = [(1, 1, "EX[:star::star::star::star:]", "하스 앞에서 낮잠자는 여름이", "여름이(귀엽다)", ""),
+season1 = [(1, 1, "EX[:star::star::star::star:]", "하스에서 낮잠자는 여름이", "여름이(귀엽다)", "https://cdn.discordapp.com/attachments/853286863414100008/853636318142529596/3.jpg"),
                 (2, 1, "SSR[:star::star::star:]", "회장 김보경", "202101 KUAAA 회장", ""),
                 (3, 1, "SR[:star::star:]", "연임하는 관측부장 김수인", "안해요......", ""),
                 (4, 1, "SR[:star::star:]", "여름이 개발자 이수호", "PR 받아주세요", ""),
