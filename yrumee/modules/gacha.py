@@ -57,7 +57,8 @@ class GachaModule(Module):
                 ("[.포인트]", "제 보유 포인트가 너무 많아 여신님도 곤란한 모양인데요?"),
                 ("[.쿠안들]", "우리 쿠안들이 너무 강한 나머지 세계정복도 가능할거 같습니다만."),
                 ("[.쿠안 [카드이름]]", "어쩔 수 없네요, 여기서는 제 힘을 조금만 보여주는 수 밖에."),
-                ("[.가챠 [타입] [횟수]]", "[타입] -> 일반, [횟수] -> 단챠/연챠(SR 이상 한 장 확정!)"),
+                ("[.가챠 [타입] [횟수]]", "[타입] -> 일반/고급(SR 이상 확정!), [횟수] -> 단챠/연챠(SR 이상 한 장 확정!)"),
+                ("[.닉네임 (바꿀 닉네임)]", "새롭게 태어난 나의 모습, 모두 주목해주세요."),
                 ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요")]
 
     def __init__(self, storage_instance):
@@ -165,24 +166,24 @@ class GachaModule(Module):
         return gacha_result
 
     async def increaseChatcnt(self, user: GachaUser, message: discord.Message):
-        lv_up = params.to_level_up(user.level)
-        pt = params.to_point
+        to_level_up = params.to_level_up(user.level)
+        to_point = params.to_point
 
         user.chatcnt += 1
         user.pointexp += 1
         user.levelexp += 1
 
-        if user.pointexp >= pt:
+        if user.pointexp >= to_point:
             user.point += 1
             user.pointexp = 0
-        if user.levelexp >= lv_up:
+        if user.levelexp >= to_level_up:
             user.level += 1
             user.levelexp = 0
             await message.channel.send(user.name + "님의 레벨이 올랐어요! ({} → {})".format(user.level - 1, user.level))
 
     def showUserInfo(self, user: GachaUser):
-        to_level_up = 100 + 10 * (user.level)
-        to_point = 3
+        to_level_up = params.to_level_up(user.level)
+        to_point = params.to_point
 
         embed = discord.Embed(title=":star:"+user.name, description=user.name+" 님의 프로필입니다!", color=0x62c1cc)
         embed.add_field(name="닉네임", value=user.name + " (lv." + str(user.level) + ")", inline=False)
@@ -282,7 +283,7 @@ class GachaModule(Module):
                             embed = self.showCardList("10연차 결과!", "", cardlist)
                         await message.channel.send(embed=embed)
                 else:
-                    await message.channel.send("사용법: .가챠 [타입(일반)] [횟수(단챠, 연챠)]")
+                    await message.channel.send("사용법: .가챠 [타입(일반, 고급)] [횟수(단챠, 연챠)]")
 
         elif command == "계정생성":
             if not payload:
@@ -295,10 +296,10 @@ class GachaModule(Module):
                 await message.channel.send("건우선배 멈춰")
                 return False
 
-            p = re.compile(r'^(\w|[가-힣])+$')
+            p = re.compile(r'^(\w|[가-힣]){1,16}$')
 
             if not p.match(payload):
-                await message.channel.send("닉네임에는 한글, 영어, 숫자, 그리고 언더바만 사용할 수 있어요!")
+                await message.channel.send("닉네임에는 1자 이상, 16자 이하의 한글, 영어, 숫자, 그리고 언더바만 사용할 수 있어요!")
                 return False
 
             if len(self.users) > 0:
@@ -313,6 +314,27 @@ class GachaModule(Module):
                 self.users[author_id].point = 99999999999
 
             await message.channel.send("{} 님의 계정을 생성했어요!".format(payload))
+
+        elif command == '닉네임':
+            if not author_id in self.users:
+                await message.channel.send("계정 등록을 먼저 해 주세요!")
+                return False
+
+            p = re.compile(r'^(\w|[가-힣]){1,16}$')
+
+            if not p.match(payload):
+                await message.channel.send("닉네임에는 1자 이상, 16자 이하의 한글, 영어, 숫자, 그리고 언더바만 사용할 수 있어요!")
+                return False
+
+            if len(self.users) > 0:
+                for user in self.users.values():
+                    if user.name == payload:
+                        await message.channel.send("중복된 닉네임이에요!")
+                        return False
+
+            self.users[author_id].name = payload
+            await message.channel.send("닉네임을 {} 으로 변경했어요!".format(payload))
+            return False
 
         elif command == "프로필":
             if not author_id in self.users:
