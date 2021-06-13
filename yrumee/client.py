@@ -4,17 +4,18 @@ import discord
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
+from yrumee.modules.gacha import GachaModule
 from yrumee.modules.graderaser import GradEraserModule
 from yrumee.modules.log import LogModule
 from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
 from yrumee.modules.nyang import NyangModule
 from yrumee.modules.reaction import ReactionModule
+from yrumee.modules.sora import SoraModule
 from yrumee.modules.stack import StackModule
 from yrumee.modules.teraforming import TeraformingModule
 from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
-from yrumee.modules.gacha import GachaModule
 from yrumee.storage import Storage
 
 
@@ -31,13 +32,14 @@ class YrumeeClient(discord.Client):
             StackModule(storage),
             MBTIModule(storage),
             YrumeeModule(storage),
+            SoraModule(storage),
             COVID19Module(storage),
             ReactionModule(storage),
             LogModule(storage),
             WhatToEatModule(storage),
             GradEraserModule(storage),
             TeraformingModule(storage),
-            GachaModule(storage)
+            GachaModule(storage),
         ]
 
     async def on_ready(self):
