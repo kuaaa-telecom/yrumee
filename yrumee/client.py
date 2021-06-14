@@ -55,6 +55,18 @@ class YrumeeClient(discord.Client):
         )
         await message.channel.send("여름이 🐈\n{}".format(help_str))
 
+    async def on_message_delete(self, message: discord.Message):
+        if message.author.id == self.user.id:  # type: ignore
+            return
+
+        server_id = str(message.guild.id)
+
+        if server_id not in self.modules:
+            self.modules[server_id] = self.new_module(server_id)
+
+        for module in self.modules[server_id]:
+            await module.on_message_delete(message)
+
     async def on_message(self, message: discord.Message):
         if message.author.id == self.user.id:  # type: ignore
             return
