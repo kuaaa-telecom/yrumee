@@ -63,11 +63,11 @@ class GachaModule(Module):
 
     def __init__(self, storage_instance):
         self.GM = storage_instance.get('GM', [699428369808359574])
-        self.cardDB = storage_instance.get('cardDB', set())
-        self.EXCardDB = storage_instance.get('EXCardDB', set())
-        self.SSRCardDB = storage_instance.get('SSRCardDB', set())
-        self.SRCardDB = storage_instance.get('SRCardDB', set())
-        self.RCardDB = storage_instance.get('RCardDB', set())
+        self.cardDB = set()
+        self.EXCardDB = set()
+        self.SSRCardDB = set()
+        self.SRCardDB = set()
+        self.RCardDB = set()
         self.users = storage_instance.get('users', {})
 
         if len(self.cardDB) == 0:
@@ -341,6 +341,7 @@ class GachaModule(Module):
                         await message.channel.send("중복된 닉네임이에요!")
                         return False
 
+            self.users[author_id].point -= params.to_change_nickname
             self.users[author_id].name = payload
             await message.channel.send("닉네임을 {} 으로 변경했어요!".format(payload))
             return False
