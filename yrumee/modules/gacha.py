@@ -1,5 +1,6 @@
 import random
 import re
+import math
 
 import discord
 import yrumee.modules.gacha_params as params
@@ -168,17 +169,20 @@ class GachaModule(Module):
     async def increaseChatcnt(self, user: GachaUser, message: discord.Message):
         to_level_up = params.to_level_up(user.level)
         to_point = params.to_point
+        
+        exp = int(math.log2(len(str(message.clean_content))))
 
         user.chatcnt += 1
-        user.pointexp += 1
-        user.levelexp += 1
+        user.pointexp += exp
+        user.levelexp += exp
 
         if user.pointexp >= to_point:
             user.point += 1
-            user.pointexp = 0
+            user.pointexp = max(0, user.pointexp - to_point)
+
         if user.levelexp >= to_level_up:
             user.level += 1
-            user.levelexp = 0
+            user.levelexp = max(0, user.levelexp - to_level_up)
             await message.channel.send(user.name + "님의 레벨이 올랐어요! ({} → {})".format(user.level - 1, user.level))
 
     def showUserInfo(self, user: GachaUser):
