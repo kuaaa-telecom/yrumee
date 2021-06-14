@@ -325,6 +325,9 @@ class GachaModule(Module):
             if not payload:
                 await message.channel.send("바꿀 닉네임을 입력해주세요!")
                 return False
+            if message.mentions or message.mention_everyone:
+                await message.channel.send("건우선배 멈춰")
+                return False
 
             p = re.compile(r'^(\w|[가-힣]){1,16}$')
 
