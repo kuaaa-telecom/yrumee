@@ -166,24 +166,28 @@ class GachaModule(Module):
 
         return gacha_result
 
-    async def increaseChatcnt(self, user: GachaUser, message: discord.Message):
+    async def increaseChatcnt(self, user: GachaUser, message: discord.Message, penalty=False):
         to_level_up = params.to_level_up(user.level)
         to_point = params.to_point
-        
+
         exp = int(math.log2(len(str(message.clean_content))))
 
-        user.chatcnt += 1
-        user.pointexp += exp
-        user.levelexp += exp
+        if penalty is True:
+            user.chatcnt -= 1
+            user.point -= 1
+        else:
+            user.chatcnt += 1
+            user.pointexp += exp
+            user.levelexp += exp
 
-        if user.pointexp >= to_point:
-            user.point += 1
-            user.pointexp = max(0, user.pointexp - to_point)
+            if user.pointexp >= to_point:
+                user.point += 1
+                user.pointexp = max(0, user.pointexp - to_point)
 
-        if user.levelexp >= to_level_up:
-            user.level += 1
-            user.levelexp = max(0, user.levelexp - to_level_up)
-            await message.channel.send(user.name + "님의 레벨이 올랐어요! ({} → {})".format(user.level - 1, user.level))
+            if user.levelexp >= to_level_up:
+                user.level += 1
+                user.levelexp = max(0, user.levelexp - to_level_up)
+                await message.channel.send(user.name + "님의 레벨이 올랐어요! ({} → {})".format(user.level - 1, user.level))
 
     def showUserInfo(self, user: GachaUser):
         to_level_up = params.to_level_up(user.level)
@@ -373,7 +377,7 @@ class GachaModule(Module):
         elif command == "쿠안":
             target_card = None
             target_card_num = None
-            
+
             for card in self.cardDB:
                 if card.name == payload:
                     target_card = card
@@ -382,7 +386,7 @@ class GachaModule(Module):
             if not target_card:
                 await message.channel.send("잘못된 카드 이름이에요!")
                 return False
-            
+
             if target_card_num not in self.users[author_id].cardlist:
                 await message.channel.send("보유하지 않은 카드에요!")
                 return False
@@ -395,3 +399,7 @@ class GachaModule(Module):
     async def on_message(self, message: discord.message):
         if message.author.id in self.users:
             await self.increaseChatcnt(self.users[message.author.id], message)
+
+    async def on_message_delete(self, message: discord.message):
+        if message.author.id in self.users:
+            await self.increaseChatcnt(self.users[message.author.id], message, penalty=True)
