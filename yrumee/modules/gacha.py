@@ -169,8 +169,8 @@ class GachaModule(Module):
     async def increaseChatcnt(self, user: GachaUser, message: discord.Message):
         to_level_up = params.to_level_up(user.level)
         to_point = params.to_point
-        
-        exp = int(math.log2(len(str(message.clean_content))))
+
+        exp = int(math.log2(max(1, len(str(message.clean_content)))))
 
         user.chatcnt += 1
         user.pointexp += exp
@@ -373,7 +373,7 @@ class GachaModule(Module):
         elif command == "쿠안":
             target_card = None
             target_card_num = None
-            
+
             for card in self.cardDB:
                 if card.name == payload:
                     target_card = card
@@ -382,7 +382,7 @@ class GachaModule(Module):
             if not target_card:
                 await message.channel.send("잘못된 카드 이름이에요!")
                 return False
-            
+
             if target_card_num not in self.users[author_id].cardlist:
                 await message.channel.send("보유하지 않은 카드에요!")
                 return False
