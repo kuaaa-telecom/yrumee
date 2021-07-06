@@ -2,12 +2,11 @@ from datetime import datetime
 
 import discord
 
-from yrumee import YrumeeClient
 from yrumee.storage import StorageInstance
 
 
 class Module:
-    def __init__(self, yrumee_client: YrumeeClient, server_id: str):
+    def __init__(self, yrumee_client, server_id: str):
         storage_instance = yrumee_client.storage.of(server_id)
         self.client = yrumee_client
         self.server_id = server_id
