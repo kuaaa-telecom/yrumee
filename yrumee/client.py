@@ -27,21 +27,20 @@ class YrumeeClient(discord.Client):
     storage: Storage
 
     def new_module(self, server_id: str) -> List[Module]:
-        storage = self.storage.of(server_id)
         return [
-            NyangModule(storage),
-            LottoModule(storage),
-            StackModule(storage),
-            MBTIModule(storage),
-            YrumeeModule(storage),
-            SoraModule(storage),
-            COVID19Module(storage),
-            ReactionModule(storage),
-            LogModule(storage),
-            WhatToEatModule(storage),
-            GradEraserModule(storage),
-            TeraformingModule(storage),
-            GachaModule(storage),
+            NyangModule(self, server_id),
+            LottoModule(self, server_id),
+            StackModule(self, server_id),
+            MBTIModule(self, server_id),
+            YrumeeModule(self, server_id),
+            SoraModule(self, server_id),
+            COVID19Module(self, server_id),
+            ReactionModule(self, server_id),
+            LogModule(self, server_id),
+            WhatToEatModule(self, server_id),
+            GradEraserModule(self, server_id),
+            TeraformingModule(self, server_id),
+            GachaModule(self, server_id),
         ]
 
     async def on_timer_elapse(self):

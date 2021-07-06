@@ -62,14 +62,15 @@ class GachaModule(Module):
                 ("[.닉네임 (바꿀 닉네임)]", "새롭게 태어난 나의 모습, 모두 주목해주세요. (100츄르 필요)"),
                 ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요")]
 
-    def __init__(self, storage_instance):
-        self.GM = storage_instance.get('GM', [699428369808359574])
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.GM = self.storage_instance.get('GM', [699428369808359574])
         self.cardDB = set()
         self.EXCardDB = set()
         self.SSRCardDB = set()
         self.SRCardDB = set()
         self.RCardDB = set()
-        self.users = storage_instance.get('users', {})
+        self.users = self.storage_instance.get('users', {})
 
         if len(self.cardDB) == 0:
             for infolist in gacha_db.season1:

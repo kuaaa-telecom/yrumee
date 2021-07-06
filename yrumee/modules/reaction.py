@@ -5,12 +5,14 @@ from yrumee.modules import Module
 
 class ReactionModule(Module):
     """
-[.리액션] 특정인이 특정 단어 또는 이모티콘을 사용하면, 여름이가 그 메시지에 리액션을 합니다.
-예) .리액션 @대상 [리액션할 단어] [:리액션할-이모티콘:]
-'리액션할-이모티콘' 자리에 ❌ 이모지를 입력하는 경우 해당 단어에 대한 리액션이 삭제됩니다.
+    [.리액션] 특정인이 특정 단어 또는 이모티콘을 사용하면, 여름이가 그 메시지에 리액션을 합니다.
+    예) .리액션 @대상 [리액션할 단어] [:리액션할-이모티콘:]
+    '리액션할-이모티콘' 자리에 ❌ 이모지를 입력하는 경우 해당 단어에 대한 리액션이 삭제됩니다.
     """
-    def __init__(self, storage_instance):
-        self.target_ids = storage_instance.get('target_ids', {})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target_ids = self.storage_instance.get("target_ids", {})
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
         if command == "리액션":
