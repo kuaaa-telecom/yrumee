@@ -17,7 +17,7 @@ class Module:
     def server(self):
         return self.client.get_guild(self.server_id)
 
-    async def on_time_elapse(self, dt: datetime) -> bool:
+    async def on_timer_elapse(self, dt: datetime) -> bool:
         return False
 
     async def on_message(self, message: discord.Message) -> bool:

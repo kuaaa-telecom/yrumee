@@ -47,7 +47,7 @@ class YrumeeClient(discord.Client):
         now = datetime.now()
         for modules in self.modules.values():
             for module in modules:
-                await module.on_time_elapse(now)
+                await module.on_timer_elapse(now)
 
     async def on_ready(self):
         self.scheduler: AsyncIOScheduler = AsyncIOScheduler()
