@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import Dict, List
 
 import discord
+from apscheduler.schedulers.asyncio import AsyncIOScheduler  # type: ignore
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
@@ -42,8 +44,21 @@ class YrumeeClient(discord.Client):
             GachaModule(storage),
         ]
 
+    async def on_timer_elapse(self):
+        now = datetime.now()
+        for modules in self.modules.values():
+            for module in modules:
+                await module.on_time_elapse(now)
+
     async def on_ready(self):
+        self.scheduler: AsyncIOScheduler = AsyncIOScheduler()
+        self.job = self.scheduler.add_job(self.on_timer_elapse, "interval", minutes=1)
+        print("Add on_timer_elapse ({})".format(self.job))
         print("Logged on as {0}!".format(self.user))
+        self.scheduler.start()
+
+    def on_exit(self):
+        self.job.remove()
 
     async def get_helps(self, modules: List[Module], message: discord.Message):
         help_str = "".join(

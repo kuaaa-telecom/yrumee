@@ -1,6 +1,6 @@
-from yrumee.storage import Storage
 from config import config
 from yrumee import YrumeeClient
+from yrumee.storage import Storage
 
 if __name__ == "__main__":
     client = YrumeeClient()
@@ -10,4 +10,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
     finally:
+        client.on_exit()
         client.storage.save()
