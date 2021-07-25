@@ -27,7 +27,7 @@ class YrumeeClient(discord.Client):
     modules: Dict[str, List[Module]] = {}
     storage: Storage
 
-    def new_module(self, server_id: str) -> List[Module]:
+    def new_module(self, server_id: int) -> List[Module]:
         return [
             NyangModule(self, server_id),
             LottoModule(self, server_id),
@@ -75,7 +75,7 @@ class YrumeeClient(discord.Client):
         if message.author.id == self.user.id:  # type: ignore
             return
 
-        server_id = str(message.guild.id)
+        server_id = message.guild.id
 
         if server_id not in self.modules:
             self.modules[server_id] = self.new_module(server_id)
@@ -87,7 +87,7 @@ class YrumeeClient(discord.Client):
         if message.author.id == self.user.id:  # type: ignore
             return
 
-        server_id = str(message.guild.id)
+        server_id = message.guild.id
 
         if server_id not in self.modules:
             self.modules[server_id] = self.new_module(server_id)
@@ -108,13 +108,13 @@ class YrumeeClient(discord.Client):
             await self.on_text(message)
 
     async def on_command(self, command, payload, message: discord.Message):
-        server_id = str(message.guild.id)
+        server_id = message.guild.id
 
         for module in self.modules[server_id]:
             await module.on_command(command, payload, message)
 
     async def on_text(self, message: discord.Message):
-        server_id = str(message.guild.id)
+        server_id = message.guild.id
 
         for module in self.modules[server_id]:
             if await module.on_message(message) is True:

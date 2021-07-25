@@ -6,7 +6,7 @@ from yrumee.storage import StorageInstance
 
 
 class Module:
-    def __init__(self, yrumee_client, server_id: str):
+    def __init__(self, yrumee_client, server_id: int):
         storage_instance = yrumee_client.storage.of(server_id)
         self.client = yrumee_client
         self.server_id = server_id
