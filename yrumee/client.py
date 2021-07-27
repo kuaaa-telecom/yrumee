@@ -9,6 +9,7 @@ from yrumee.modules.covid19 import COVID19Module
 from yrumee.modules.everyday import EverydayModule
 from yrumee.modules.gacha import GachaModule
 from yrumee.modules.graderaser import GradEraserModule
+from yrumee.modules.icecream import IcecreamModule
 from yrumee.modules.log import LogModule
 from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
@@ -43,6 +44,7 @@ class YrumeeClient(discord.Client):
             TeraformingModule(self, server_id),
             GachaModule(self, server_id),
             EverydayModule(self, server_id),
+            IcecreamModule(self, server_id),
         ]
 
     async def on_timer_elapse(self):
