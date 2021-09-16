@@ -43,6 +43,10 @@ class GachaUser:
         self.cardlist = {}
         self.seasonlist = {}
 
+    @property
+    def total_exp(self):
+        return sum(params.to_level_up(r) for r in range(self.level)) + self.levelexp
+
 def rarePriority(card: GachaCard):
     priority = {"EX[:star::star::star::star:]": 1, "SSR[:star::star::star:]": 2, "SR[:star::star:]": 3, "R[:star:]": 4}
     return priority[card.rare]
@@ -252,8 +256,8 @@ class GachaModule(Module):
                 return False
             elif payload == "랭킹":
                 limit = 10
-                ranked_player = list(sorted(self.users.values(), key=lambda x: x.levelexp, reverse=True)[:limit])
-                ranked_player_str = "\n".join(["{}위: {} ({:,})".format(i + 1, p.name, p.levelexp) for i, p in enumerate(ranked_player)])
+                ranked_player = list(sorted(self.users.values(), key=lambda x: x.total_exp, reverse=True)[:limit])
+                ranked_player_str = "\n".join(["{}위: {} ({:,})".format(i + 1, p.name, p.total_exp) for i, p in enumerate(ranked_player)])
                 await message.channel.send("[가챠 랭킹]\n{}".format(ranked_player_str))
             #가챠 뽑는 로직: skeletonK
             else:
