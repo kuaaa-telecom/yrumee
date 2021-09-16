@@ -60,7 +60,8 @@ class GachaModule(Module):
                 ("[.쿠안 [카드이름]]", "어쩔 수 없네요, 여기서는 제 힘을 조금만 보여주는 수 밖에."),
                 ("[.가챠 [타입] [횟수]]", "[타입] -> 일반/고급(SR 이상 확정!), [횟수] -> 단챠/연챠(SR 이상 한 장 확정!)"),
                 ("[.닉네임 (바꿀 닉네임)]", "새롭게 태어난 나의 모습, 모두 주목해주세요. (100츄르 필요)"),
-                ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요")]
+                ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요"),
+                ("[.가챠 랭킹]", "디스코드에 많이 상주했던 사람의 순위를 보여줍니다.")]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -249,6 +250,11 @@ class GachaModule(Module):
                     embed.add_field(name=helpdoc[0], value=helpdoc[1], inline=False)
                 await message.channel.send("도움말 목록이에요!", embed=embed)
                 return False
+            elif payload == "랭킹":
+                limit = 10
+                ranked_player = list(sorted(self.users.values(), key=lambda x: x.levelexp, reverse=True)[:limit])
+                ranked_player_str = "\n".join(["{}위: {} ({:,})".format(i + 1, p.name, p.levelexp) for i, p in enumerate(ranked_player)])
+                await message.channel.send("[가챠 랭킹]\n{}".format(ranked_player_str))
             #가챠 뽑는 로직: skeletonK
             else:
                 if not author_id in self.users:
