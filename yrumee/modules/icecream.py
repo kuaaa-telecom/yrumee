@@ -14,7 +14,7 @@ class IcecreamModule(Module):
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
         if command == "아이스크림":
-            target_id = message.mentions[0].id
+            target_id = message.author.id
             if target_id:
                 if target_id not in self.icecreams:
                     self.icecreams[target_id] = True
