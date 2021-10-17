@@ -1,5 +1,6 @@
 import random
 import re
+import math
 
 import discord
 import yrumee.modules.gacha_params as params
@@ -42,6 +43,10 @@ class GachaUser:
         self.cardlist = {}
         self.seasonlist = {}
 
+    @property
+    def total_exp(self):
+        return sum(params.to_level_up(r) for r in range(self.level)) + self.levelexp
+
 def rarePriority(card: GachaCard):
     priority = {"EX[:star::star::star::star:]": 1, "SSR[:star::star::star:]": 2, "SR[:star::star:]": 3, "R[:star:]": 4}
     return priority[card.rare]
@@ -59,16 +64,18 @@ class GachaModule(Module):
                 ("[.쿠안 [카드이름]]", "어쩔 수 없네요, 여기서는 제 힘을 조금만 보여주는 수 밖에."),
                 ("[.가챠 [타입] [횟수]]", "[타입] -> 일반/고급(SR 이상 확정!), [횟수] -> 단챠/연챠(SR 이상 한 장 확정!)"),
                 ("[.닉네임 (바꿀 닉네임)]", "새롭게 태어난 나의 모습, 모두 주목해주세요. (100츄르 필요)"),
-                ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요")]
+                ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요"),
+                ("[.가챠 랭킹]", "디스코드에 많이 상주했던 사람의 순위를 보여줍니다.")]
 
-    def __init__(self, storage_instance):
-        self.GM = storage_instance.get('GM', [699428369808359574])
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.GM = self.storage_instance.get('GM', [699428369808359574])
         self.cardDB = set()
         self.EXCardDB = set()
         self.SSRCardDB = set()
         self.SRCardDB = set()
         self.RCardDB = set()
-        self.users = storage_instance.get('users', {})
+        self.users = self.storage_instance.get('users', {})
 
         if len(self.cardDB) == 0:
             for infolist in gacha_db.season1:
@@ -169,16 +176,19 @@ class GachaModule(Module):
         to_level_up = params.to_level_up(user.level)
         to_point = params.to_point
 
+        exp = int(math.log2(max(1, len(str(message.clean_content)))))
+
         user.chatcnt += 1
-        user.pointexp += 1
-        user.levelexp += 1
+        user.pointexp += exp
+        user.levelexp += exp
 
         if user.pointexp >= to_point:
             user.point += 1
-            user.pointexp = 0
+            user.pointexp = max(0, user.pointexp - to_point)
+
         if user.levelexp >= to_level_up:
             user.level += 1
-            user.levelexp = 0
+            user.levelexp = max(0, user.levelexp - to_level_up)
             await message.channel.send(user.name + "님의 레벨이 올랐어요! ({} → {})".format(user.level - 1, user.level))
 
     def showUserInfo(self, user: GachaUser):
@@ -244,6 +254,11 @@ class GachaModule(Module):
                     embed.add_field(name=helpdoc[0], value=helpdoc[1], inline=False)
                 await message.channel.send("도움말 목록이에요!", embed=embed)
                 return False
+            elif payload == "랭킹":
+                limit = 10
+                ranked_player = list(sorted(self.users.values(), key=lambda x: x.total_exp, reverse=True)[:limit])
+                ranked_player_str = "\n".join(["{}위: {} ({:,})".format(i + 1, p.name, p.total_exp) for i, p in enumerate(ranked_player)])
+                await message.channel.send("[가챠 랭킹]\n{}".format(ranked_player_str))
             #가챠 뽑는 로직: skeletonK
             else:
                 if not author_id in self.users:
@@ -369,7 +384,7 @@ class GachaModule(Module):
         elif command == "쿠안":
             target_card = None
             target_card_num = None
-            
+
             for card in self.cardDB:
                 if card.name == payload:
                     target_card = card
@@ -378,7 +393,7 @@ class GachaModule(Module):
             if not target_card:
                 await message.channel.send("잘못된 카드 이름이에요!")
                 return False
-            
+
             if target_card_num not in self.users[author_id].cardlist:
                 await message.channel.send("보유하지 않은 카드에요!")
                 return False

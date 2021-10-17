@@ -30,9 +30,10 @@ class Storage:
         self.initialize_if_not_exists()
 
     def of(self, server_id: str):
-        if server_id not in self.instances:
-            self.instances[server_id] = StorageInstance()
-        return self.instances[server_id]
+        _server_id = str(server_id)
+        if _server_id not in self.instances:
+            self.instances[_server_id] = StorageInstance()
+        return self.instances[_server_id]
 
     def initialize_if_not_exists(self):
         if not hasattr(self, "instances"):

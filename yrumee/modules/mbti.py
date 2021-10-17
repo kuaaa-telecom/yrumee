@@ -1,24 +1,25 @@
 import json
-from yrumee.storage import Storage
 
 import discord
 
 from yrumee.ext.pyjosa import replace_josa
 from yrumee.modules import Module
+from yrumee.storage import Storage
 
 
 class MBTIModule(Module):
     """
-[.mbti] 이 도움말을 출력합니다.
-[.mbti (mbti-유형)] 자신의 MBTI를 등록합니다.
-예) `.mbti ESFJ`
-[.mbti (사람-이름)] 다른 사람의 MBTI를 확인합니다.
-예) `.mbti 표대현`
-[.(mbti-유형)] 특정 MBTI 유형의 사람 이름을 나열합니다.
+    [.mbti] 이 도움말을 출력합니다.
+    [.mbti (mbti-유형)] 자신의 MBTI를 등록합니다.
+    예) `.mbti ESFJ`
+    [.mbti (사람-이름)] 다른 사람의 MBTI를 확인합니다.
+    예) `.mbti 표대현`
+    [.(mbti-유형)] 특정 MBTI 유형의 사람 이름을 나열합니다.
     """
 
-    def __init__(self, storage_instance):
-        self.mbti = storage_instance.get('mbti', {})
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mbti = self.storage_instance.get("mbti", {})
 
     @classmethod
     def is_mbti_format(cls, payload):
@@ -48,19 +49,19 @@ class MBTIModule(Module):
                 register_mode = True
 
             if not payload:
-                await message.channel.send(
-                    self.__doc__
-                )
+                await message.channel.send(self.__doc__)
             elif register_mode:
-                if payload.upper() == 'CUTE':
+                if payload.upper() == "CUTE":
                     await message.channel.send("[MBTI] 당신은 고양이가 아닙니다.")
                 else:
-                    self.mbti[message.author.display_name.split("_")[0]] = payload.upper()
+                    self.mbti[
+                        message.author.display_name.split("_")[0]
+                    ] = payload.upper()
                     await message.channel.send("[MBTI] 등록 완료!")
             else:
                 who = payload.split("_")[0]
-                if who == '여름이':
-                    mbti = 'CUTE'
+                if who == "여름이":
+                    mbti = "CUTE"
                 else:
                     mbti = self.mbti.get(who)
 

@@ -26,8 +26,9 @@ class LogModule(Module):
         fh.setFormatter(logging.Formatter(FORMAT))
         return fh
 
-    def __init__(self, storage_instance):
-        self.agree_status = storage_instance.get("chat_log_agree_status", {})
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.agree_status = self.storage_instance.get("chat_log_agree_status", {})
         handlers = [
             self.add_file_handler("yrumee-{}.log".format(int(time.time()))),
             logging.StreamHandler(),
