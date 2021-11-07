@@ -78,9 +78,10 @@ class GachaModule(Module):
         self.users = self.storage_instance.get('users', {})
 
         if len(self.cardDB) == 0:
+            for infolist in gacha_db.season0:
+                self.addCard(infolist)
             for infolist in gacha_db.season1:
                 self.addCard(infolist)
-
     def userCardList(self, user: GachaUser):
         cardlist = []
         for card in self.cardDB:
@@ -399,7 +400,6 @@ class GachaModule(Module):
                 return False
 
             await message.channel.send(embed=self.showCard(target_card))
-
         elif command == "컬렉션":
             await message.channel.send("아직 만드는 중이에요!")
 
