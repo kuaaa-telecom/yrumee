@@ -19,7 +19,6 @@ from yrumee.modules.stack import StackModule
 from yrumee.modules.teraforming import TeraformingModule
 from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
-from yrumee.modules.gacha import GachaModule
 from yrumee.storage import Storage
 
 
@@ -35,7 +34,6 @@ class YrumeeClient(discord.Client):
             StackModule(self, server_id),
             MBTIModule(self, server_id),
             YrumeeModule(self, server_id),
-            SoraModule(self, server_id),
             COVID19Module(self, server_id),
             ReactionModule(self, server_id),
             LogModule(self, server_id),
