@@ -19,13 +19,14 @@ class WhatToEatModule(Module):
     [.뱃속] 들어있는 음식 리스트를 반환합니다.
     """
 
-    def __init__(self, storage_instance):
-        self.breakfast = storage_instance.get("breakfast", set())
-        self.lunch = storage_instance.get("lunch", set())
-        self.dinner = storage_instance.get("dinner", set())
-        self.yasik = storage_instance.get("yasik", set())
-        self.diet = storage_instance.get("diet", {"브로콜리", "닭가슴살", "굶어라냥!"})
-        self.on_diet = storage_instance.get("on_diet", set())
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.breakfast = self.storage_instance.get("breakfast", set())
+        self.lunch = self.storage_instance.get("lunch", set())
+        self.dinner = self.storage_instance.get("dinner", set())
+        self.yasik = self.storage_instance.get("yasik", set())
+        self.diet = self.storage_instance.get("diet", {"브로콜리", "닭가슴살", "굶어라냥!"})
+        self.on_diet = self.storage_instance.get("on_diet", set())
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
 
@@ -84,10 +85,9 @@ class WhatToEatModule(Module):
         elif command == "요요":
             self.on_diet.discard(message.author.display_name.split("_")[0])
             await message.channel.send("해제 완료!")
-        
+
         elif command == "뱃속":
             payload = f"아침: {self.breakfast}\n점심: {self.lunch}\n저녁: {self.dinner}\n야식: {self.yasik}\n다이어트: {self.diet}"
-            chunks = [payload[i:i+1000] for i in range(0, len(payload), 1000)]
+            chunks = [payload[i : i + 1000] for i in range(0, len(payload), 1000)]
             for chunk in chunks:
                 await message.channel.send(chunk)
-

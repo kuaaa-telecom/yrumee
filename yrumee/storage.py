@@ -22,7 +22,7 @@ class Storage:
 
     @property
     def latest_version(self):
-        return 2
+        return 3
 
     def __init__(self):
         self.logger.warning("First load")
@@ -30,9 +30,10 @@ class Storage:
         self.initialize_if_not_exists()
 
     def of(self, server_id: str):
-        if server_id not in self.instances:
-            self.instances[server_id] = StorageInstance()
-        return self.instances[server_id]
+        _server_id = str(server_id)
+        if _server_id not in self.instances:
+            self.instances[_server_id] = StorageInstance()
+        return self.instances[_server_id]
 
     def initialize_if_not_exists(self):
         if not hasattr(self, "instances"):
@@ -59,6 +60,21 @@ class Storage:
                 maybe_list = instance.get(key, None)
                 if type(maybe_list) is list:
                     setattr(instance, key, set(maybe_list))
+        elif version_to == 3:
+            # migration for 1f74b0a9d43cf8b62b8f805a3927d446f8c4fee5
+            for key in [
+                "cardDB",
+                "EXCardDB",
+                "SSRCardDB",
+                "SRCardDB",
+                "RCardDB",
+            ]:
+                val = instance.get(key, None)
+                if val is None:
+                    setattr(instance, key, set())
+            maybe_users = instance.get("users", None)
+            if maybe_users is None:
+                setattr(instance, maybe_users, {})
         else:
             pass
 
