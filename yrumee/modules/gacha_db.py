@@ -6,7 +6,7 @@ default_img = ["",
                 ]
 
 
-season0 = [(0, 19, "SR[:star::star::star:]", "할로윈 쿠안들 /w 이민정", "누가 누굴까요?", "https://cdn.discordapp.com/attachments/853286863414100008/904642109850673162/4-1.jpg")]
+season0 = [(0, 19, "SR[:star::star:]", "할로윈 쿠안들 /w 이민정", "누가 누굴까요?", "https://cdn.discordapp.com/attachments/853286863414100008/904642109850673162/4-1.jpg")]
 
 
 season1 = [(1, 1, "EX[:star::star::star::star:]", "하스에서 낮잠자는 여름이", "여름이(귀엽다)", "https://cdn.discordapp.com/attachments/853286863414100008/853636318142529596/3.jpg"),
