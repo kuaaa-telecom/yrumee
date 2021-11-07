@@ -10,11 +10,12 @@ class TeraformingModule(Module):
     [.테포마] 여름이가 추천하는 테포마 세팅을 출력합니다.
     """
 
-    def __init__(self, storage_instance):
-        self.expansion_list = storage_instance.get(
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.expansion_list = self.storage_instance.get(
             "expansion_list", ["비너스", "서곡", "개척기지", "격동"]
         )
-        self.map_list = storage_instance.get("map_list", ["타르시스", "헬라스", "엘리시움"])
+        self.map_list = self.storage_instance.get("map_list", ["타르시스", "헬라스", "엘리시움"])
 
     async def on_command(self, command: str, payload: str, message: discord.Message):
         if command == "테포마":
