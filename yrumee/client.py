@@ -15,7 +15,6 @@ from yrumee.modules.lotto import LottoModule
 from yrumee.modules.mbti import MBTIModule
 from yrumee.modules.nyang import NyangModule
 from yrumee.modules.reaction import ReactionModule
-from yrumee.modules.sora import SoraModule
 from yrumee.modules.stack import StackModule
 from yrumee.modules.teraforming import TeraformingModule
 from yrumee.modules.what_to_eat import WhatToEatModule
@@ -35,7 +34,6 @@ class YrumeeClient(discord.Client):
             StackModule(self, server_id),
             MBTIModule(self, server_id),
             YrumeeModule(self, server_id),
-            SoraModule(self, server_id),
             COVID19Module(self, server_id),
             ReactionModule(self, server_id),
             LogModule(self, server_id),
