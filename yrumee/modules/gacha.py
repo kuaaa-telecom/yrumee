@@ -80,6 +80,8 @@ class GachaModule(Module):
         if len(self.cardDB) == 0:
             for infolist in gacha_db.season1:
                 self.addCard(infolist)
+            for infolist in gacha_db.seasonH:
+                self.addCard(infolist)
 
     def userCardList(self, user: GachaUser):
         cardlist = []
