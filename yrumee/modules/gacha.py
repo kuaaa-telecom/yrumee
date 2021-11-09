@@ -78,10 +78,11 @@ class GachaModule(Module):
         self.users = self.storage_instance.get('users', {})
 
         if len(self.cardDB) == 0:
-            for infolist in gacha_db.season0:
-                self.addCard(infolist)
             for infolist in gacha_db.season1:
                 self.addCard(infolist)
+            for infolist in gacha_db.seasonH:
+                self.addCard(infolist)
+
     def userCardList(self, user: GachaUser):
         cardlist = []
         for card in self.cardDB:
@@ -302,8 +303,11 @@ class GachaModule(Module):
                     await message.channel.send("사용법: .가챠 [타입(일반, 고급)] [횟수(단챠, 연챠)]")
 
         elif command == "계정생성":
+            if self.users[author_id].point < params.to_change_nickname:
+                await message.channel.send("츄르가 부족해요!")
+                return False
             if not payload:
-                await message.channel.send("닉네임을 입력해주세요!")
+                await message.channel.send("바꿀 닉네임을 입력해주세요!")
                 return False
             if author_id in self.users:
                 await message.channel.send("이미 등록된 계정이에요!")
