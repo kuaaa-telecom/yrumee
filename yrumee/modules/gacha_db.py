@@ -38,7 +38,7 @@ seasonH = [(0, 19, "SSR[:star::star::star:]", "할로윈 쿠안들 /w 이민정"
                 (22, 19, "R[:star:]", "공부하는 서보성", "시험 12시간 남았어", "https://cdn.discordapp.com/attachments/853286863414100008/907514304184598568/aa0a008b00861523.jpg"),
                 (23, 19, "R[:star:]", "바나나 이민정", "바나나(알코올 16.9%)", "https://cdn.discordapp.com/attachments/853286863414100008/907514305098969088/aebf08fcf1025b24.jpg"),
                 (24, 19, "R[:star:]", "호박 드론 이수호", "이거 재밌겠다", "https://cdn.discordapp.com/attachments/853286863414100008/907514382785847316/5e36e63d8b35ce0d.jpg"),
-                (25, 19, "R[:star:]", "오페라의 유령 이유정", "Think of me:musical_note:", "https://cdn.discordapp.com/attachments/853286863414100008/907514387001126952/c4112cea95483218.jpg"),
+                (25, 19, "R[:star:]", "오페라의 유령 이유정", "Think of me🎵", "https://cdn.discordapp.com/attachments/853286863414100008/907514387001126952/c4112cea95483218.jpg"),
                 (26, 19, "R[:star:]", "매드 사이언티스트 최희원", "세그에 레이지를 섞으면...?", "https://cdn.discordapp.com/attachments/853286863414100008/907514422388461598/bb0e2f5ca39b6465.jpg"),
                 (27, 19, "SR[:star::star:]", "할로윈 칠판", "화성에서 기타를", "https://cdn.discordapp.com/attachments/853286863414100008/907514699782959174/765b302b50bd1ba5.jpg"),
                 (28, 19, "SR[:star::star:]", "네크로맨서", "허현 여기에 잠들다", "https://cdn.discordapp.com/attachments/853286863414100008/907517976582979594/57ddf2f2f8522f4a.jpg"),]
