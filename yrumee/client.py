@@ -19,6 +19,7 @@ from yrumee.modules.stack import StackModule
 from yrumee.modules.teraforming import TeraformingModule
 from yrumee.modules.what_to_eat import WhatToEatModule
 from yrumee.modules.yrumee import YrumeeModule
+from yrumee.modules.gacha import GachaModule
 from yrumee.storage import Storage
 
 

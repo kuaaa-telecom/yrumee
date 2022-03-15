@@ -63,6 +63,8 @@ class GachaModule(Module):
                 ("[.쿠안들]", "우리 쿠안들이 너무 강한 나머지 세계정복도 가능할거 같습니다만."),
                 ("[.쿠안 [카드이름]]", "어쩔 수 없네요, 여기서는 제 힘을 조금만 보여주는 수 밖에."),
                 ("[.가챠 [타입] [횟수]]", "[타입] -> 일반/고급(SR 이상 확정!), [횟수] -> 단챠/연챠(SR 이상 한 장 확정!)"),
+                ("[.가챠 가챠", "자네 진심인가? 츄르로 츄르를 딴다고? (50츄르 필요)"),
+                ("[.가챠 츄르", "여름이가 츄르를 맛있게 먹습니다 (?츄르 필요)"),
                 ("[.닉네임 (바꿀 닉네임)]", "새롭게 태어난 나의 모습, 모두 주목해주세요. (100츄르 필요)"),
                 ("[.컬렉션]", "이번 시즌에도 역시 제가 대활약이네요"),
                 ("[.가챠 랭킹]", "디스코드에 많이 상주했던 사람의 순위를 보여줍니다.")]
@@ -78,6 +80,8 @@ class GachaModule(Module):
         self.users = self.storage_instance.get('users', {})
 
         if len(self.cardDB) == 0:
+            for infolist in gacha_db.season0:
+                self.addCard(infolist)
             for infolist in gacha_db.season1:
                 self.addCard(infolist)
             for infolist in gacha_db.seasonH:
@@ -261,6 +265,31 @@ class GachaModule(Module):
                 ranked_player = list(sorted(self.users.values(), key=lambda x: x.total_exp, reverse=True)[:limit])
                 ranked_player_str = "\n".join(["{}위: {} ({:,})".format(i + 1, p.name, p.total_exp) for i, p in enumerate(ranked_player)])
                 await message.channel.send("[가챠 랭킹]\n{}".format(ranked_player_str))
+            elif payload == "가챠":
+                cost = 50
+
+                if self.users[author_id].point < cost:
+                    await message.channel.send("츄르가 부족해요!")
+                    return False
+
+                self.users[author_id].point -= cost
+
+                gacha_list = [10, 20, 20, 30, 30, 50, 70, 100]
+                gacha_result = random.choice(gacha_list)
+
+                self.users[author_id].point += cost
+                await message.channel.send("{}츄르 당첨!".format(gacha_result))
+            elif payload == "츄르":
+                gacha_list = [10, 20, 20, 30, 30, 50, 70, 100]
+                cost = random.choice(gacha_list)
+
+                if self.users[author_id].point < cost:
+                    await message.channel.send("츄르가 부족해요!")
+                    return False
+
+                self.users[author_id].point -= cost
+                await message.channel.send("냠냠, {}츄르가 사라졌어요!".format(cost))
+
             #가챠 뽑는 로직: skeletonK
             else:
                 if not author_id in self.users:
