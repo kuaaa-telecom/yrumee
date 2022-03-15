@@ -35,7 +35,6 @@ class YrumeeClient(discord.Client):
             StackModule(self, server_id),
             MBTIModule(self, server_id),
             YrumeeModule(self, server_id),
-            SoraModule(self, server_id),
             COVID19Module(self, server_id),
             ReactionModule(self, server_id),
             LogModule(self, server_id),

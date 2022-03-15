@@ -82,6 +82,9 @@ class GachaModule(Module):
                 self.addCard(infolist)
             for infolist in gacha_db.season1:
                 self.addCard(infolist)
+            for infolist in gacha_db.seasonH:
+                self.addCard(infolist)
+
     def userCardList(self, user: GachaUser):
         cardlist = []
         for card in self.cardDB:
