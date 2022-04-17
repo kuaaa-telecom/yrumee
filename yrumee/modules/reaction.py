@@ -8,6 +8,8 @@ class ReactionModule(Module):
     [.리액션] 특정인이 특정 단어 또는 이모티콘을 사용하면, 여름이가 그 메시지에 리액션을 합니다.
     예) .리액션 @대상 [리액션할 단어] [:리액션할-이모티콘:]
     '리액션할-이모티콘' 자리에 ❌ 이모지를 입력하는 경우 해당 단어에 대한 리액션이 삭제됩니다.
+    [.리액션목록] 대상에 달려있는 단어:이모티콘 목록을 보여줍니다.
+    예) .리액션목록 @대상
     """
 
     def __init__(self, *args, **kwargs):
@@ -32,6 +34,19 @@ class ReactionModule(Module):
             else:
                 self.target_ids[target_id][word] = emoji
                 await message.channel.send("등록 완료!")
+
+        elif command == "리액션목록":
+            if len(message.mentions) < 1:
+                await message.channel.send("사용법: .리액션목록 @대상")
+
+            target_id = message.mentions[0].id
+            
+            if target_id not in self.target_ids:
+                await message.channel.send("등록된 리액션이 없습니다.")
+
+            await message.channel.send(
+                "리액션 목록: " + ", ".join(f"{word}:{emoji}" for word, emoji in self.target_ids[target_id].items())
+            )
 
     async def on_message(self, message: discord.Message) -> bool:
         for word, emoji in self.target_ids.get(message.author.id, {}).items():
