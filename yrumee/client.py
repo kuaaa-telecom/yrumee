@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import Dict, List
 
 import discord
-from apscheduler.schedulers.asyncio import AsyncIOScheduler  # type: ignore
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from matplotlib.pyplot import title  # type: ignore
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
@@ -70,7 +71,8 @@ class YrumeeClient(discord.Client):
                 for module in modules
             ]
         )
-        await message.channel.send("여름이 🐈\n{}".format(help_str))
+        help_str_emb = discord.Embed(title="여름이 🐈", description=help_str, color=0x848484)
+        await message.channel.send(embed=help_str_emb)
 
     async def on_message_delete(self, message: discord.Message):
         if message.author.id == self.user.id:  # type: ignore
