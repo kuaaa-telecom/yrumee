@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Dict, List
 
 import discord
+from apscheduler.schedulers.asyncio import AsyncIOScheduler  # type: ignore
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
@@ -52,6 +53,7 @@ class YrumeeClient(discord.Client):
                 await module.on_timer_elapse(now)
 
     async def on_ready(self):
+        self.scheduler: AsyncIOScheduler = AsyncIOScheduler()
         self.job = self.scheduler.add_job(self.on_timer_elapse, "interval", minutes=1)
         print("Add on_timer_elapse ({})".format(self.job))
         print("Logged on as {0}!".format(self.user))
@@ -68,8 +70,7 @@ class YrumeeClient(discord.Client):
                 for module in modules
             ]
         )
-        help_str_emb = discord.Embed(title="여름이 🐈", description=help_str, color=0x848484)
-        await message.channel.send(embed=help_str_emb)
+        await message.channel.send("여름이 🐈\n{}".format(help_str))
 
     async def on_message_delete(self, message: discord.Message):
         if message.author.id == self.user.id:  # type: ignore
