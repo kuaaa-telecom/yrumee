@@ -1,9 +1,12 @@
 import datetime
 import time
+from pytz import timezone
 
 import discord
 
 from yrumee.modules import Module
+
+
 
 
 class EverydayModule(Module):
@@ -33,7 +36,7 @@ class EverydayModule(Module):
                 await message.channel.send("내일부터 날짜와 요일을 알려주지 않는다냥.")
 
     async def on_timer_elapse(self, datetime):
-        if not (datetime.hour == 0 and datetime.minute == 0):
+        if not (datetime.hour(timezone='Asia/Seoul') == 0 and datetime.minute(timezone='Asia/Seoul') == 0):
             return False
 
         dow_dic = {
