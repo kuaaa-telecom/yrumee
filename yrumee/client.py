@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Dict, List
 
 import discord
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from yrumee.modules import Module
 from yrumee.modules.covid19 import COVID19Module
@@ -52,6 +53,7 @@ class YrumeeClient(discord.Client):
                 await module.on_timer_elapse(now)
 
     async def on_ready(self):
+        self.scheduler: AsyncIOScheduler = AsyncIOScheduler()
         self.job = self.scheduler.add_job(self.on_timer_elapse, "interval", minutes=1)
         print("Add on_timer_elapse ({})".format(self.job))
         print("Logged on as {0}!".format(self.user))
